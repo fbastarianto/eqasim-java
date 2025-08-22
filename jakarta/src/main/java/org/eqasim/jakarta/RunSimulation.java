@@ -1,10 +1,19 @@
 package org.eqasim.jakarta;
 
 
-
+import org.eqasim.core.analysis.DistanceUnit;
 import org.eqasim.core.components.config.EqasimConfigGroup;
 import org.eqasim.core.simulation.EqasimConfigurator;
 import org.eqasim.core.simulation.analysis.EqasimAnalysisModule;
+import org.matsim.api.core.v01.Scenario;
+
+import org.matsim.core.config.CommandLine;
+import org.matsim.core.config.CommandLine.ConfigurationException;
+import org.matsim.core.config.Config;
+import org.matsim.core.config.ConfigUtils;
+import org.matsim.core.controler.Controler;
+import org.matsim.core.scenario.ScenarioUtils;
+
 import org.eqasim.core.simulation.mode_choice.EqasimModeChoiceModule;
 import org.eqasim.jakarta.eventhandling.MyEventHandler1;
 //import org.eqasim.jakarta.eventhandling.MyEventHandler2;
@@ -15,22 +24,10 @@ import org.eqasim.jakarta.eventhandling.MyEventHandler1;
 //import org.eqasim.jakarta.eventhandling.MyEventHandler7;
 import org.eqasim.jakarta.mode_choice.JakartaModeChoiceModule;
 import org.eqasim.jakarta.roadpricing.JakartaMcRoadPricingModule;
-import org.matsim.api.core.v01.Scenario;
-import org.matsim.core.config.CommandLine;
-import org.matsim.core.config.CommandLine.ConfigurationException;
-import org.matsim.core.config.Config;
-import org.matsim.core.config.ConfigUtils;
+
 import org.matsim.core.controler.AbstractModule;
-import org.matsim.core.controler.Controler;
-import org.matsim.core.scenario.ScenarioUtils;
+
 //import org.matsim.roadpricing.RoadPricingModule;
-
-
-
-
-
-
-
 
 
 public class RunSimulation {
@@ -42,18 +39,18 @@ public class RunSimulation {
 				.requireOptions("config-path") //
 				.allowPrefixes("mode-parameter", "cost-parameter") //
 				.build();
-		
-		
 
-		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"),
-				EqasimConfigurator.getConfigGroups());
-		EqasimConfigGroup.get(config).setTripAnalysisInterval(1);
+		JakartaConfigurator configurator = new JakartaConfigurator(cmd);
+		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"));
+		configurator.updateConfig(config);		//EqasimConfigurator.getConfigGroups());
+		EqasimConfigGroup.get(config).setAnalysisInterval(1);
+		EqasimConfigGroup.get(config).setDistanceUnit(DistanceUnit.foot);
 		cmd.applyConfiguration(config);
 
 		Scenario scenario = ScenarioUtils.createScenario(config);
-		EqasimConfigurator.configureScenario(scenario);
+		configurator.configureScenario(scenario); //EqasimConfigurator.configureScenario(scenario);
 		ScenarioUtils.loadScenario(scenario);
-		EqasimConfigurator.adjustScenario(scenario);
+		configurator.adjustScenario(scenario); //EqasimConfigurator.adjustScenario(scenario);
 		
 		EqasimConfigGroup eqasimConfig = (EqasimConfigGroup) config.getModules().get(EqasimConfigGroup.GROUP_NAME);
 		eqasimConfig.setEstimator("walk", "jWalkEstimator");
@@ -72,7 +69,7 @@ public class RunSimulation {
 		config.controler().setOutputDirectory(outputDirectory);
 		
 		Controler controller = new Controler(scenario);
-		EqasimConfigurator.configureController(controller);
+		configurator.configureController(controller);//EqasimConfigurator.configureController(controller);
 		controller.addOverridingModule(new JakartaMcRoadPricingModule());
 		// add the events handlers
 		controller.addOverridingModule(new AbstractModule(){

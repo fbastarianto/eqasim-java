@@ -11,10 +11,11 @@ import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
+import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
+//import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 public class JakartaMotorcycleCostModel extends AbstractCostModel {
 	private final JakartaCostParameters costParameters;
@@ -541,16 +542,20 @@ public class JakartaMotorcycleCostModel extends AbstractCostModel {
         link.add(Id.createLinkId(455002));
         link.add(Id.createLinkId(199416));
         link.add(Id.createLinkId(381373));
-        link.add(Id.createLinkId(284188));	
+        link.add(Id.createLinkId(284188));
 		for (PlanElement element : elements) {
 			if (element instanceof Leg) {
 				Leg leg = (Leg) element;
-				double departureTime = leg.getDepartureTime();
-				if (link.contains(leg.getRoute().getStartLinkId()) && ((departureTime> 7 *3600 && departureTime < 10* 3600)
-						|| (departureTime < 19* 3600 && departureTime > 16 *3600))) {
-					total_km = total_km + leg.getRoute().getDistance() * 1e-3  ;
-				}
-				//System.out.println(leg.getRoute().getStartLinkId());
+                    if (leg.getDepartureTime().isDefined()) {
+                            double departureTime = leg.getDepartureTime().seconds();
+                            if (link.contains(leg.getRoute().getStartLinkId()) &&
+                                    ((departureTime > 7 * 3600 && departureTime < 10 * 3600)
+                                            || (departureTime < 19 * 3600 && departureTime > 16 * 3600))) {
+
+                                    total_km += leg.getRoute().getDistance() * 1e-3;
+                            }
+                    }
+                    //System.out.println(leg.getRoute().getStartLinkId());
 			}
 		}
 		return total_km;

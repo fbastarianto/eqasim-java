@@ -50,7 +50,7 @@ public final class JakartaMcRoadPricingModule extends AbstractModule {
 		// yyyy TODO could probably combine them somewhat
 		bind(JakartaMcPlansCalcRouteWithTollOrNot.class);
 		addPlanStrategyBinding("ReRouteAreaToll").toProvider(JakartaMcReRouteAreaToll.class);
-		addTravelDisutilityFactoryBinding("motorcycle_with_payed_area_toll").toInstance(new RandomizingTimeDistanceTravelDisutilityFactory(TransportMode.motorcycle, getConfig().planCalcScore()));
+		addTravelDisutilityFactoryBinding("motorcycle_with_payed_area_toll").toInstance(new RandomizingTimeDistanceTravelDisutilityFactory(TransportMode.motorcycle, getConfig()) );//getConfig().planCalcScore()));
 		addRoutingModuleBinding("motorcycle_with_payed_area_toll").toProvider(new JakartaMcRoadPricingNetworkRouting());
 		
 		// yyyy TODO It might be possible that the area stuff is adequatly resolved by the randomizing approach.  Would need to try 

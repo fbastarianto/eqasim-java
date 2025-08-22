@@ -24,7 +24,8 @@ import java.util.TreeMap;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.events.LinkEnterEvent;
 import org.matsim.api.core.v01.events.PersonMoneyEvent;
@@ -53,7 +54,7 @@ import org.eqasim.jakarta.roadpricing.JakartaMcRoadPricingSchemeImpl.Cost;
  */
 public final class JakartaMcCalcPaidToll implements LinkEnterEventHandler, VehicleEntersTrafficEventHandler, VehicleLeavesTrafficEventHandler {
 
-	Logger log = Logger.getLogger( JakartaMcCalcPaidToll.class ) ;
+	Logger log = LogManager.getLogger( JakartaMcCalcPaidToll.class ) ;
 
 	static class AgentTollInfo {
 		public double toll = 0.0;

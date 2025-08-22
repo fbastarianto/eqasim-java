@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.population.Person;
@@ -39,7 +40,7 @@ public final class JakartaMcRoadPricingSchemeUsingTollFactor implements JakartaM
 	// needs to be public. kai, sep'14
 	
 	@SuppressWarnings("unused")
-	private static final Logger log = Logger.getLogger( JakartaMcRoadPricingSchemeUsingTollFactor.class ) ;
+	private static final Logger log = LogManager.getLogger( JakartaMcRoadPricingSchemeUsingTollFactor.class ) ;
 
 	private JakartaMcRoadPricingScheme delegate = null ;
 	private final JakartaMcTollFactor tollFactor ;

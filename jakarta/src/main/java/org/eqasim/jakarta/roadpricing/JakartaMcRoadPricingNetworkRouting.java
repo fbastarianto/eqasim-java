@@ -1,7 +1,7 @@
 package org.eqasim.jakarta.roadpricing;
 
 
-
+import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.population.PopulationFactory;
@@ -10,6 +10,7 @@ import org.matsim.core.config.groups.PlansCalcRouteConfigGroup;
 import org.matsim.core.network.NetworkUtils;
 import org.matsim.core.network.algorithms.TransportModeNetworkFilter;
 import org.matsim.core.router.DefaultRoutingModules;
+import org.matsim.core.router.MultimodalLinkChooser; //error: cannot find symbol >> Probably due to the usage of MATSim 13.0 >> need to update to the recent/stable MATSim version >> NO ERROR AFTER USING VERSION 15.0
 import org.matsim.core.router.RoutingModule;
 import org.matsim.core.router.SingleModeNetworksCache;
 import org.matsim.core.router.costcalculators.TravelDisutilityFactory;
@@ -17,6 +18,9 @@ import org.matsim.core.router.util.LeastCostPathCalculator;
 import org.matsim.core.router.util.LeastCostPathCalculatorFactory;
 import org.matsim.core.router.util.TravelDisutility;
 import org.matsim.core.router.util.TravelTime;
+import org.matsim.core.utils.timing.TimeInterpretation; //error: java: package org.matsim.core.utils.timing does not exist >> Probably due to the usage of MATSim 13.0 >> need to update to the recent/stable MATSim version >> NO ERROR AFTER USING VERSION 15.0
+
+import com.google.inject.name.Named;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -47,7 +51,8 @@ import java.util.Set;
 	@Inject
     PlanCalcScoreConfigGroup planCalcScoreConfigGroup;
 	
-	@Inject PlansCalcRouteConfigGroup plansCalcRouteConfigGroup ;
+	@Inject
+	PlansCalcRouteConfigGroup plansCalcRouteConfigGroup ;
 
 	@Inject
     Network network;
@@ -56,7 +61,20 @@ import java.util.Set;
     PopulationFactory populationFactory;
 
 	@Inject
+	Scenario scenario ;
+
+	@Inject
     LeastCostPathCalculatorFactory leastCostPathCalculatorFactory;
+
+	@Inject
+	@Named(TransportMode.walk)
+	RoutingModule walkRouter;
+
+	@Inject
+	TimeInterpretation timeInterpretation;
+
+	@Inject
+	MultimodalLinkChooser multimodalLinkChooser;
 	
 	private
 	Network filteredNetwork;
@@ -67,7 +85,7 @@ import java.util.Set;
 		TransportModeNetworkFilter filter = new TransportModeNetworkFilter(network);
 		Set<String> modes = new HashSet<>();
 		modes.add(TransportMode.motorcycle);
-		filteredNetwork = NetworkUtils.createNetwork();
+		filteredNetwork = NetworkUtils.createNetwork(scenario.getConfig().network());//filteredNetwork = NetworkUtils.createNetwork();
 		filter.filter(filteredNetwork, modes);
 		}
 		TravelDisutilityFactory travelDisutilityFactory = this.travelDisutilityFactory.get(JakartaMcPlansCalcRouteWithTollOrNot.MOTORCYCLE_WITH_PAYED_AREA_TOLL);
@@ -77,9 +95,9 @@ import java.util.Set;
 						filteredNetwork,
 						travelDisutilityFactory.createTravelDisutility(travelTime),
 						travelTime);
-		if ( plansCalcRouteConfigGroup.isInsertingAccessEgressWalk() ) {
-			return DefaultRoutingModules.createAccessEgressNetworkRouter(TransportMode.motorcycle, populationFactory,
-					filteredNetwork, routeAlgo, plansCalcRouteConfigGroup);
+		if (!plansCalcRouteConfigGroup.getAccessEgressType().equals(PlansCalcRouteConfigGroup.AccessEgressType.none)) { //if ( plansCalcRouteConfigGroup.isInsertingAccessEgressWalk() ) {
+			return DefaultRoutingModules.createAccessEgressNetworkRouter(TransportMode.motorcycle, //populationFactory,
+					(LeastCostPathCalculator) filteredNetwork, (Scenario) routeAlgo, (Network) scenario, walkRouter, timeInterpretation, multimodalLinkChooser); // plansCalcRouteConfigGroup); // adding (LeastCostPathCalculator), (Scenario), and (Network)
 		} else {
 			return DefaultRoutingModules.createPureNetworkRouter(TransportMode.motorcycle, populationFactory,
 					filteredNetwork, routeAlgo);

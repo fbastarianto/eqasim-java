@@ -5,7 +5,6 @@ import org.eqasim.core.simulation.mode_choice.parameters.ModeParameters;
 public class JakartaModeParameters extends ModeParameters {
 	public class JakartaWalkParameters {
 		public double alpha_age = 0.0;
-		
 	}
 	
 	public class JakartaCarParameters {
@@ -13,8 +12,27 @@ public class JakartaModeParameters extends ModeParameters {
 	}
 	
 	public class JakartaPTParameters {
-	//	public double alpha_pt_city = 0.0;
+		// Existing parameter (keep for backward compatibility)
+		//	public double alpha_pt_city = 0.0;
 		public double alpha_age = 0.0;
+
+		// New nested class for latent class parameters
+		public static class LatentClassParameters {
+			public double constant = 0.0;
+			public double accessTime = 0.0;
+			public double inVehicleTime = 0.0;
+			public double egressTime = 0.0;
+			public double cost = 0.0;
+		}
+
+		// Add four latent class parameter sets
+		public LatentClassParameters class1 = new LatentClassParameters();
+		public LatentClassParameters class2 = new LatentClassParameters();
+		public LatentClassParameters class3 = new LatentClassParameters();
+		public LatentClassParameters class4 = new LatentClassParameters();
+
+		// Generic parameters for non-classified individuals
+		public LatentClassParameters generic = new LatentClassParameters();
 
 	}
 	
@@ -113,12 +131,12 @@ public class JakartaModeParameters extends ModeParameters {
 		// Car
 		parameters.car.alpha_u = -0.50;
 		parameters.car.betaTravelTime_u_min = -1.24/100;
-        
-		parameters.car.constantAccessEgressWalkTime_min = 0.0;
+
+		parameters.car.additionalAccessEgressWalkTime_min = 0.0;
 		parameters.car.constantParkingSearchPenalty_min = 0.0;
 		//parameters.jCar.alpha_car_city = -0.1597;
 
-		// PT
+		// PT // jPT or pt???
 		parameters.pt.alpha_u = -3.50;
 		parameters.pt.betaLineSwitch_u = 0.0;
 		parameters.pt.betaInVehicleTime_u_min = -1.49/100;
@@ -126,6 +144,28 @@ public class JakartaModeParameters extends ModeParameters {
 		parameters.pt.betaAccessEgressTime_u_min = -1.49/100;
 		//parameters.jPT.alpha_pt_city = 0.0;
 		//parameters.jPT.alpha_age = 0.0;
+
+		// PT Latent Class Parameters
+		// Class 1: Non-private motorised
+		parameters.jPT.class1.accessTime = -0.013;
+		parameters.jPT.class1.inVehicleTime = -0.023;
+		parameters.jPT.class1.egressTime = -0.069;
+		parameters.jPT.class1.cost = -0.006;
+
+		// Class 2: Young cost-sensitive
+		parameters.jPT.class2.accessTime = -0.461;
+		parameters.jPT.class2.inVehicleTime = 0.156;  // Note positive value
+		parameters.jPT.class2.egressTime = -0.450;
+		parameters.jPT.class2.cost = -0.183;
+
+		// Class 3: Affluent car-dependent
+		parameters.jPT.class3.cost = -0.019;  // Only cost considered (other n.e.)
+
+		// Class 4: Young time-sensitive
+		parameters.jPT.class4.accessTime = -0.052;
+		parameters.jPT.class4.inVehicleTime = -0.010;
+		parameters.jPT.class4.egressTime = -0.056;
+		parameters.jPT.class4.cost = 0.030;   // Note positive value
 		
 		// Bike
 		parameters.bike.alpha_u = -4.44;

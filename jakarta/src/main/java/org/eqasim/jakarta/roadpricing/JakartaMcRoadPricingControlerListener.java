@@ -2,7 +2,8 @@ package org.eqasim.jakarta.roadpricing;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.matsim.core.controler.OutputDirectoryHierarchy;
 import org.matsim.core.controler.events.IterationEndsEvent;
 import org.matsim.core.controler.events.ShutdownEvent;
@@ -39,7 +40,7 @@ import org.eqasim.jakarta.roadpricing.JakartaMcRoadPricingWriterXMLv1;
  */
 class JakartaMcRoadPricingControlerListener implements StartupListener, IterationEndsListener, ShutdownListener {
 
-	final static private Logger log = Logger.getLogger(JakartaMcRoadPricingControlerListener.class);
+	final static private Logger log = LogManager.getLogger(JakartaMcRoadPricingControlerListener.class);
 
 	private final JakartaMcRoadPricingScheme scheme;
 	private final JakartaMcCalcPaidToll calcPaidToll;

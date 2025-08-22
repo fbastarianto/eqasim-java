@@ -10,11 +10,12 @@ import org.eqasim.jakarta.mode_choice.utilities.variables.CarodtVariables;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
+import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
+//import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 public class JakartaCarodtPredictor extends CachedVariablePredictor<CarodtVariables> {
 	private final CostModel costModel;
@@ -34,7 +35,8 @@ public class JakartaCarodtPredictor extends CachedVariablePredictor<CarodtVariab
 
 		Leg leg = (Leg) elements.get(0);
 
-		double travelTime_min = leg.getTravelTime() / 60.0;
+		// Extract travel time in minutes, defaulting to 0.0 if undefined
+		double travelTime_min = leg.getTravelTime().orElse(0.0) / 60.0;
 		double cost_MU = costModel.calculateCost_MU(person, trip, elements);
 
 		double euclideanDistance_km = PredictorUtils.calculateEuclideanDistance_km(trip);

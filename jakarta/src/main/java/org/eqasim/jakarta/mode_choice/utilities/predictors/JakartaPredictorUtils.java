@@ -35,6 +35,15 @@ public class JakartaPredictorUtils {
         String sex = (String) person.getAttributes().getAttribute("sex");
 		return sex;
 	}
+
+        static public int vehicleOwnership(Person person) {
+        String availability = (String) person.getAttributes().getAttribute("carAvailability");
+        return "always".equals(availability) ? 1 : 0;
+        }
+
+        static public int employment(Person person) {
+        String employmentStatus = (String) person.getAttributes().getAttribute("employment");
+        return "yes".equals(employmentStatus) ? 1 : 0; // student → 0, no → 0
+        }
 	
 }
-

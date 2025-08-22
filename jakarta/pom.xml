@@ -1,49 +1,307 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-	<artifactId>jakarta</artifactId>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.eqasim</groupId>
-		<artifactId>eqasim</artifactId>
-		<version>1.0.5</version>
-		<relativePath>../pom.xml</relativePath>
+		<!-- Sets MATSim repos & BOM -->
+		<groupId>org.matsim</groupId>
+		<artifactId>matsim-all</artifactId>
+		<version>15.0</version>
+		<relativePath/>
 	</parent>
 
+	<groupId>org.eqasim</groupId>
+	<artifactId>jakarta</artifactId>
+	<version>1.0.0</version>
+
+	<repositories>
+		<repository>
+			<id>central</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+		</repository>
+		<repository>
+			<id>matsim</id>
+			<url>https://repo.matsim.org/repository/matsim</url>
+		</repository>
+		<repository>
+			<id>eqasim</id>
+			<url>https://packagecloud.io/eth-ivt/eqasim/maven2</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
+		<!-- EQASim -->
 		<dependency>
 			<groupId>org.eqasim</groupId>
 			<artifactId>core</artifactId>
-			<version>1.0.5</version>
+			<version>2.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.geotools</groupId>
+					<artifactId>gt-referencing</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- MATSim Core -->
+		<dependency>
+			<groupId>org.matsim</groupId>
+			<artifactId>matsim</artifactId>
+			<version>${parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- MATSim Contribs -->
+		<dependency>
+			<groupId>org.matsim.contrib</groupId>
+			<artifactId>discrete_mode_choice</artifactId>
+			<version>${parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
-    		<groupId>org.matsim.contrib</groupId>
-    		<artifactId>roadpricing</artifactId>
-    	<version>0.10.1</version>
-</dependency>
-	</dependencies>
-	<profiles>
-		<profile>
-			<id>standalone</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-shade-plugin</artifactId>
-						<version>3.2.0</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>shade</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+			<groupId>org.matsim.contrib</groupId>
+			<artifactId>roadpricing</artifactId>
+			<version>${parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
+		<!-- Guice -->
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>5.1.0</version>
+		</dependency>
+
+		<!-- GeoTools 29.x line) -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-main</artifactId>
+			<version>29.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools.ogc</groupId>
+			<artifactId>net.opengis.ows</artifactId>
+			<version>29.0</version>
+		</dependency>
+
+		<!-- If you read Shapefiles -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>29.0</version>
+		</dependency>
+
+		<!-- If you read GeoPackages (you already pull this transitively via eqasim-core, but add explicitly if you use it directly) -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geopkg</artifactId>
+			<version>29.0</version>
+		</dependency>
+
+		<!-- Often handy for CRS lookups; optional but recommended -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-epsg-hsql</artifactId>
+			<version>29.0</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>31.1-jre</version>
+		</dependency>
+
+		<!-- Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.19.0</version>
+		</dependency>
+
+		<!-- Indriya -->
+		<dependency>
+			<groupId>tech.units</groupId>
+			<artifactId>indriya</artifactId>
+			<version>2.2</version>
+		</dependency>
+
+		<!-- Other deps you listed -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.17.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.24.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.24.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.locationtech.jts</groupId>
+			<artifactId>jts-core</artifactId>
+			<version>1.20.0</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Compile -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<source>21</source>
+					<target>21</target>
+				</configuration>
+			</plugin>
+
+			<!-- Shade -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.5.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals><goal>shade</goal></goals>
+						<configuration>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<transformers>
+								<!-- Merge ServiceLoader descriptors so GeoTools DataStoreFinder works -->
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+								<!-- Set your entry point -->
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>org.eqasim.jakarta.RunSimulation</mainClass>
+								</transformer>
+							</transformers>
+							<!-- Strip signatures that cause "Invalid signature file digest" -->
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.2</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+			</plugin>
+
+			<!-- Enforcer: run but don't fail build on R.U.B.D. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.6.1</version>
+				<executions>
+					<execution>
+						<id>enforce</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<!-- keep reports but do not fail the build -->
+							<fail>false</fail>
+							<rules>
+								<RequireUpperBoundDeps>
+									<!-- only supported knobs here are 'uniqueVersions' and 'excludes' -->
+									<uniqueVersions>true</uniqueVersions>
+									<excludes>
+										<!-- exclude the specific families you know are intentionally mixed -->
+										<!-- GeoTools line (29 vs 33 pulled transitively) -->
+										<exclude>org.geotools:gt-main</exclude>
+										<exclude>org.geotools:gt-referencing</exclude>
+										<exclude>org.geotools.ogc:net.opengis.ows</exclude>
+										<!-- Jackson family -->
+										<exclude>com.fasterxml.jackson.core:jackson-core</exclude>
+										<exclude>com.fasterxml.jackson.core:jackson-databind</exclude>
+										<exclude>com.fasterxml.jackson.dataformat:jackson-dataformat-csv</exclude>
+										<exclude>com.fasterxml.jackson.dataformat:jackson-dataformat-yaml</exclude>
+										<exclude>com.fasterxml.jackson.core:jackson-annotations</exclude>
+										<!-- Guava -->
+										<exclude>com.google.guava:guava</exclude>
+										<!-- Commons / Log4j -->
+										<exclude>org.apache.commons:commons-lang3</exclude>
+										<exclude>org.apache.logging.log4j:log4j-api</exclude>
+										<exclude>org.apache.logging.log4j:log4j-core</exclude>
+										<!-- Geometry / Units -->
+										<exclude>org.locationtech.jts:jts-core</exclude>
+										<exclude>tech.units:indriya</exclude>
+										<exclude>javax.measure:unit-api</exclude>
+										<!-- MATSim overlaps (stable vs weekly) -->
+										<exclude>org.matsim:matsim</exclude>
+										<exclude>org.matsim.contrib:discrete_mode_choice</exclude>
+										<exclude>org.matsim.contrib:roadpricing</exclude>
+									</excludes>
+								</RequireUpperBoundDeps>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
 </project>

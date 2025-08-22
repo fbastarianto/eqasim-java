@@ -70,7 +70,7 @@ public final class JakartaMcRoadPricingWriterXMLv1 extends MatsimXmlWriter {
 			  else {
 			    this.writer.write(">\n");
 			    for (Cost c : cs) {
-			      this.writeCost(c);
+			      this.writeCost(c, false);
 			    }
 			    this.writer.write("</link>");
 			  }
@@ -87,7 +87,7 @@ public final class JakartaMcRoadPricingWriterXMLv1 extends MatsimXmlWriter {
 			}
 	
 			for (JakartaMcRoadPricingSchemeImpl.Cost cost : this.scheme.getTypicalCosts()) {
-			  this.writeCost(cost);
+			  this.writeCost(cost, true);
 			}
 	
 			// finish
@@ -96,21 +96,36 @@ public final class JakartaMcRoadPricingWriterXMLv1 extends MatsimXmlWriter {
 			throw new UncheckedIOException(e);
 		}
 	}
-	
-	private void writeCost(Cost cost) throws IOException {
-    this.writer.write("\t<cost ");
-    if (!Time.isUndefinedTime(cost.startTime)) {
-      this.writer.write("start_time=\"" + Time.writeTime(cost.startTime) + "\" ");
-    }
-    if (!Time.isUndefinedTime(cost.endTime) 
-    		&& cost.endTime != Double.POSITIVE_INFINITY
-    		// The toll reader converts undefined time to POSITIVE_INFINITY since otherwise it does not make sense.
-    		// This, however, means that we need to deal with this here as well.  kai, aug'14
-    		) {
-      this.writer.write("end_time=\"" + Time.writeTime(cost.endTime) + "\" ");
-    }
-    this.writer.write("amount=\"" + cost.amount + "\" />\n");
+
+	private void writeCost(Cost cost, boolean typical) throws IOException {
+		if (typical) {
+			this.writer.write("\t<cost ");
+		} else {
+			this.writer.write("\t\t\t<cost ");
+		}
+		if (cost.startTime > Double.NEGATIVE_INFINITY) {
+			this.writer.write("start_time=\"" + Time.writeTime(cost.startTime) + "\" ");
+		}
+		if (cost.endTime < Double.POSITIVE_INFINITY) {
+			this.writer.write("end_time=\"" + Time.writeTime(cost.endTime) + "\" ");
+		}
+		this.writer.write("amount=\"" + cost.amount + "\" />\n");
 	}
+
+	//private void writeCost(Cost cost) throws IOException {
+    //this.writer.write("\t<cost ");
+    //if (!Time.isUndefinedTime(cost.startTime)) {
+    //  this.writer.write("start_time=\"" + Time.writeTime(cost.startTime) + "\" ");
+    //}
+    //if (!Time.isUndefinedTime(cost.endTime)
+    //		&& cost.endTime != Double.POSITIVE_INFINITY
+    //		// The toll reader converts undefined time to POSITIVE_INFINITY since otherwise it does not make sense.
+    //		// This, however, means that we need to deal with this here as well.  kai, aug'14
+    //		) {
+    //  this.writer.write("end_time=\"" + Time.writeTime(cost.endTime) + "\" ");
+    //}
+    //this.writer.write("amount=\"" + cost.amount + "\" />\n");
+	//}
 
 }
 

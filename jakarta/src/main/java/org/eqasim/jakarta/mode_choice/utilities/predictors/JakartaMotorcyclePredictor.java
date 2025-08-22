@@ -9,11 +9,12 @@ import org.eqasim.jakarta.mode_choice.utilities.variables.MotorcycleVariables;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
+import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
+//import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 public class JakartaMotorcyclePredictor extends CachedVariablePredictor<MotorcycleVariables> {
 	private final CostModel costModel;
@@ -33,11 +34,12 @@ public class JakartaMotorcyclePredictor extends CachedVariablePredictor<Motorcyc
 
 		Leg leg = (Leg) elements.get(0);
 
-		double travelTime_min = leg.getTravelTime() / 60.0; // + parameters.car.constantParkingSearchPenalty_min;
+		// Extract travel time in minutes, defaulting to 0.0 if undefined
+		double travelTime_min = leg.getTravelTime().orElse(0.0) / 60.0; // + parameters.car.constantParkingSearchPenalty_min;
 		double cost_MU = costModel.calculateCost_MU(person, trip, elements);
 
 		double euclideanDistance_km = PredictorUtils.calculateEuclideanDistance_km(trip);
-		double accessEgressTime_min = parameters.car.constantAccessEgressWalkTime_min;
+		double accessEgressTime_min = parameters.car.additionalAccessEgressWalkTime_min;;
 
 		return new MotorcycleVariables(travelTime_min, cost_MU, euclideanDistance_km, accessEgressTime_min);
 	}

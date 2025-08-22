@@ -2,7 +2,7 @@ package org.eqasim.jakarta.mode_choice.costs;
 
 import java.util.List;
 
-import org.eqasim.core.components.transit.routing.EnrichedTransitRoute;
+//import org.eqasim.core.components.transit.routing.EnrichedTransitRoute;
 import org.eqasim.core.simulation.mode_choice.cost.CostModel;
 import org.eqasim.jakarta.mode_choice.parameters.JakartaCostParameters;
 import org.eqasim.jakarta.mode_choice.utilities.predictors.JakartaPersonPredictor;
@@ -13,10 +13,12 @@ import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.pt.transitSchedule.api.TransitLine;
 import org.matsim.pt.transitSchedule.api.TransitRoute;
+import org.matsim.pt.routes.TransitPassengerRoute;
+import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
+//import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 public class JakartaPtCostModel implements CostModel {
 	private final JakartaPersonPredictor predictor;
@@ -42,8 +44,8 @@ public class JakartaPtCostModel implements CostModel {
 				if (leg.getMode().contentEquals(mode)) {
 
 					TransitLine tl = scenario.getTransitSchedule().getTransitLines()
-							.get(((EnrichedTransitRoute) leg.getRoute()).getTransitLineId());
-					TransitRoute tr = tl.getRoutes().get(((EnrichedTransitRoute) leg.getRoute()).getTransitRouteId());
+							.get(((TransitPassengerRoute) leg.getRoute()).getLineId());
+					TransitRoute tr = tl.getRoutes().get(((TransitPassengerRoute) leg.getRoute()).getRouteId());
 					if (tr.getTransportMode().equals("train") || tr.getTransportMode().equals("rail"))
 						n_Vehicles += 1;
 				}
@@ -63,8 +65,8 @@ public class JakartaPtCostModel implements CostModel {
 				if (leg.getMode().contentEquals(mode)) {
 
 					TransitLine tl = scenario.getTransitSchedule().getTransitLines()
-							.get(((EnrichedTransitRoute) leg.getRoute()).getTransitLineId());
-					TransitRoute tr = tl.getRoutes().get(((EnrichedTransitRoute) leg.getRoute()).getTransitRouteId());
+							.get(((TransitPassengerRoute) leg.getRoute()).getLineId());
+					TransitRoute tr = tl.getRoutes().get(((TransitPassengerRoute) leg.getRoute()).getRouteId());
 					if (tr.getTransportMode().equals("bus")|| tr.getTransportMode().equals("angkot"))
 						n_Vehicles += 1;
 				}

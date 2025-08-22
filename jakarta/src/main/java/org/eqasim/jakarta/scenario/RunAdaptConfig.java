@@ -6,29 +6,34 @@ import java.util.List;
 
 import org.eqasim.core.components.config.ConfigAdapter;
 import org.eqasim.core.components.config.EqasimConfigGroup;
-import org.eqasim.core.simulation.EqasimConfigurator;
+import org.eqasim.jakarta.JakartaConfigurator;
+import org.eqasim.core.simulation.EqasimConfigurator; // NA in eqasim GitHub
 import org.eqasim.jakarta.mode_choice.JakartaModeChoiceModule;
-import org.eqasim.jakarta.scenario.RunAdaptConfig;
-//import org.matsim.api.core.v01.Scenario;
+import org.eqasim.jakarta.mode_choice.parameters.JakartaModeParameters;
+import org.eqasim.jakarta.scenario.RunAdaptConfig; // NA in eqasim GitHub
+import org.matsim.api.core.v01.Scenario; // NA in eqasim GitHub
 import org.matsim.api.core.v01.TransportMode;
+import org.matsim.contribs.discrete_mode_choice.modules.config.DiscreteModeChoiceConfigGroup;
+import org.matsim.core.config.CommandLine.ConfigurationException;
+import org.matsim.core.config.CommandLine;
 import org.matsim.core.config.CommandLine.ConfigurationException;
 import org.matsim.core.config.Config;
-import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ModeParams;
-import org.matsim.core.config.groups.QSimConfigGroup;
-import org.matsim.core.config.groups.QSimConfigGroup.LinkDynamics;
-//import org.matsim.core.controler.Controler;
-//import org.matsim.core.scenario.ScenarioUtils;
-//import org.matsim.
+import org.matsim.core.config.ConfigUtils; // NA in eqasim GitHub
+import org.matsim.core.config.groups.QSimConfigGroup; // NA in eqasim GitHub
+import org.matsim.core.config.groups.QSimConfigGroup.LinkDynamics; // NA in eqasim GitHub
+import org.matsim.core.controler.Controler; // NA in eqasim GitHub
+import org.matsim.core.scenario.ScenarioUtils; // NA in eqasim GitHub
 
 
-import ch.ethz.matsim.discrete_mode_choice.modules.config.DiscreteModeChoiceConfigGroup;
+//import ch.ethz.matsim.discrete_mode_choice.modules.config.DiscreteModeChoiceConfigGroup;
 
 public class RunAdaptConfig {
 	static public void main(String[] args) throws ConfigurationException {
-		ConfigAdapter.run(args, EqasimConfigurator.getConfigGroups(), RunAdaptConfig::adaptConfiguration);
+		CommandLine cmd = new CommandLine.Builder(args).build();; // Create a CommandLine object from args and then pass it to JakartaConfigurator
+		ConfigAdapter.run(args, new JakartaConfigurator(cmd),
+				(config, s) -> adaptConfiguration(config)); //RunAdaptConfig::adaptConfiguration); >> before (config, s) .... // EqasimConfigurator.getConfigGroups() >> before JakartaConfigurator
 	}
-	
 
 
 	static public void adaptConfiguration(Config config) {
@@ -42,14 +47,9 @@ public class RunAdaptConfig {
 		//Controler controler = new Controler( scenario ) ;
 		//controler.addOverridingModule(new RoadP)
 		
-		
-		
 		//set link dynamics and seep mode
 		config.qsim().setPcuThresholdForFlowCapacityEasing( 0.001 );
 		config.qsim().setLinkDynamics(LinkDynamics.SeepageQ);
-		
-		
-		
 		
 		List<String> seepMode = new LinkedList<>(config.qsim().getSeepModes());
 		seepMode.add("motorcycle");
@@ -82,9 +82,6 @@ public class RunAdaptConfig {
 		Collection<String> tripConstraints = dmcConfig.getTripConstraints();
 		tripConstraints.add("WalkDurationConstraint");
 		dmcConfig.setTripConstraints(tripConstraints);
-		
-		
-		
 
 		//QsimConfigGroup eqasimConfig = QsimConfigGroup.get(config);	
 		
@@ -111,10 +108,6 @@ public class RunAdaptConfig {
 		
 		ModeParams mcodtParams = new ModeParams("mcodt");
 		config.planCalcScore().addModeParams(mcodtParams);
-		
-		
-	
-		
 		
 	}
 

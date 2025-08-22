@@ -33,6 +33,8 @@ import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.costcalculators.TravelDisutilityFactory;
 import org.matsim.core.router.util.TravelTime;
 import org.eqasim.jakarta.roadpricing.JakartaMcRoadPricingScheme;
+import org.matsim.core.utils.timing.TimeInterpretation;
+import org.matsim.facilities.ActivityFacilities;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -43,11 +45,21 @@ import java.util.Map;
 	public static final String MOTORCYCLE_WITH_PAYED_AREA_TOLL = "motorcycle_with_payed_area_toll";
 	private JakartaMcRoadPricingScheme roadPricingScheme;
 	private Provider<TripRouter> tripRouterFactory;
+	private final TimeInterpretation timeInterpretation;
+	private final ActivityFacilities activityFacilities;
 
-	@Inject
-	JakartaMcPlansCalcRouteWithTollOrNot(JakartaMcRoadPricingScheme roadPricingScheme, Provider<TripRouter> tripRouterFactory, Map<String, TravelDisutilityFactory> travelDisutilityFactory, Map<String, TravelTime> travelTime) {
-		this.roadPricingScheme = roadPricingScheme;
-		this.tripRouterFactory = tripRouterFactory;
+
+	 @Inject
+	 JakartaMcPlansCalcRouteWithTollOrNot(JakartaMcRoadPricingScheme roadPricingScheme,
+										  Provider<TripRouter> tripRouterFactory,
+										  Map<String, TravelDisutilityFactory> travelDisutilityFactory,
+										  Map<String, TravelTime> travelTime,
+										  ActivityFacilities activityFacilities,
+										  TimeInterpretation timeInterpretation) {
+		 this.roadPricingScheme = roadPricingScheme;
+		 this.tripRouterFactory = tripRouterFactory;
+		 this.activityFacilities = activityFacilities;
+		 this.timeInterpretation = timeInterpretation;
 	}
 
 	@Override
@@ -55,23 +67,23 @@ import java.util.Map;
 		handlePlan(plan);
 	}
 
-	private void handlePlan(Plan plan) {
-		// This calculates a best-response plan from the two options, paying area toll or not.
-		// From what I understand, it may be simpler/better to just throw a coin and produce
-		// one of the two options.
-		replaceCarModeWithTolledCarMode(plan);
-		PlanRouter untolledPlanRouter = new PlanRouter(tripRouterFactory.get());
-		untolledPlanRouter.run(plan);
-		double areaToll = roadPricingScheme.getTypicalCosts().iterator().next().amount;
-		double routeCostWithAreaToll = sumNetworkModeCosts(plan) + areaToll;
-		replaceTolledCarModeWithCarMode(plan);
-		new PlanRouter(tripRouterFactory.get()).run(plan);
-		double routeCostWithoutAreaToll = sumNetworkModeCosts(plan);
-		if (routeCostWithAreaToll < routeCostWithoutAreaToll) {
-			replaceCarModeWithTolledCarMode(plan);
-			untolledPlanRouter.run(plan);
-		}
-	}
+	 private void handlePlan(Plan plan) {
+		 // This calculates a best-response plan from the two options, paying area toll or not.
+		 // From what I understand, it may be simpler/better to just throw a coin and produce
+		 // one of the two options.
+		 replaceCarModeWithTolledCarMode(plan);
+		 PlanRouter untolledPlanRouter = new PlanRouter(tripRouterFactory.get(), activityFacilities, timeInterpretation);
+		 untolledPlanRouter.run(plan);
+		 double areaToll = roadPricingScheme.getTypicalCosts().iterator().next().amount;
+		 double routeCostWithAreaToll = sumNetworkModeCosts(plan) + areaToll;
+		 replaceTolledCarModeWithCarMode(plan);
+		 new PlanRouter(tripRouterFactory.get(), activityFacilities, timeInterpretation).run(plan);
+		 double routeCostWithoutAreaToll = sumNetworkModeCosts(plan);
+		 if (routeCostWithAreaToll < routeCostWithoutAreaToll) {
+			 replaceCarModeWithTolledCarMode(plan);
+			 untolledPlanRouter.run(plan);
+		 }
+	 }
 
 	private void replaceCarModeWithTolledCarMode(Plan plan) {
 		for (PlanElement planElement : plan.getPlanElements()) {

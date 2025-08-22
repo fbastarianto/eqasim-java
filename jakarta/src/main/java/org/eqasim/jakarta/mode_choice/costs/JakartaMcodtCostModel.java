@@ -7,10 +7,11 @@ import org.eqasim.jakarta.mode_choice.parameters.JakartaCostParameters;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
+import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
+//import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 public class JakartaMcodtCostModel extends AbstractCostModel {
 	private final JakartaCostParameters costParameters;
@@ -31,7 +32,9 @@ public class JakartaMcodtCostModel extends AbstractCostModel {
 				Leg leg = (Leg) element;
 
 				if (leg.getMode().contentEquals(mode)) {
-					total_time += (double) leg.getRoute().getTravelTime() / 60;
+					if (leg.getRoute().getTravelTime().isDefined()) {
+						total_time += leg.getRoute().getTravelTime().seconds() / 60;
+					}
 				}
 			}
 		}

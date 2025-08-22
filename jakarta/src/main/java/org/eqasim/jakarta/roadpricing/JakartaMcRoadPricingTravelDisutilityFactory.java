@@ -57,7 +57,7 @@ public final class JakartaMcRoadPricingTravelDisutilityFactory implements Travel
 	public TravelDisutility createTravelDisutility(TravelTime timeCalculator) {
 		if ( this.sigma != 0. ) {
 			if ( previousTravelDisutilityFactory instanceof RandomizingTimeDistanceTravelDisutilityFactory) {
-				((RandomizingTimeDistanceTravelDisutilityFactory) previousTravelDisutilityFactory).setSigma( this.sigma );
+				//((RandomizingTimeDistanceTravelDisutilityFactory) previousTravelDisutilityFactory).setSigma( this.sigma ); //unable this line, please see: https://github.com/matsim-org/matsim-libs/blob/main/contribs/roadpricing/src/main/java/org/matsim/contrib/roadpricing/RoadPricingTravelDisutilityFactory.java
 			} else {
 				throw new RuntimeException("cannot use sigma!=null together with provided travel disutility factory");
 			}

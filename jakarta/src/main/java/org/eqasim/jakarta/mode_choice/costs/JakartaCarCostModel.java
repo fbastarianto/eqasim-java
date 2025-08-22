@@ -11,10 +11,11 @@ import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
+import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
+//import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 public class JakartaCarCostModel extends AbstractCostModel {
 	private final JakartaCostParameters costParameters;
@@ -545,12 +546,14 @@ public class JakartaCarCostModel extends AbstractCostModel {
 		for (PlanElement element : elements) {
 			if (element instanceof Leg) {
 				Leg leg = (Leg) element;
-				double departureTime = leg.getDepartureTime();
-				if (link.contains(leg.getRoute().getStartLinkId()) && ((departureTime> 7 *3600 && departureTime < 10* 3600)
-						|| (departureTime < 19* 3600 && departureTime > 16 *3600))) {
-					total_km = total_km + leg.getRoute().getDistance() * 1e-3  ;
-					
-				}
+                    if (leg.getDepartureTime().isDefined()) {
+                            double departureTime = leg.getDepartureTime().seconds();
+                            if (link.contains(leg.getRoute().getStartLinkId()) && ((departureTime > 7 * 3600 && departureTime < 10 * 3600)
+                                    || (departureTime < 19 * 3600 && departureTime > 16 * 3600))) {
+                                    total_km = total_km + leg.getRoute().getDistance() * 1e-3;
+
+                            }
+                    }
 				
 			}
 		}
@@ -566,15 +569,18 @@ public class JakartaCarCostModel extends AbstractCostModel {
 		
 		for (PlanElement element : elements) {
 			if (element instanceof Leg) {
-				Leg leg = (Leg) element;
-				if (link.contains(leg.getRoute().getStartLinkId()) && ((leg.getDepartureTime()> 6 *3600 && leg.getDepartureTime() < 10* 3600)
-						|| (leg.getDepartureTime() < 20* 3600 && leg.getDepartureTime() > 16 *3600))) {
-					return true  ;
-					
-					
-				}
-				System.out.println(leg.getRoute().getStartLinkId());
-			}
+                    Leg leg = (Leg) element;
+                    if (leg.getDepartureTime().isDefined()) {
+                            double depTime = leg.getDepartureTime().seconds(); // in seconds
+
+                            if (link.contains(leg.getRoute().getStartLinkId()) &&
+                                    ((depTime > 6 * 3600 && depTime < 10 * 3600) ||
+                                            (depTime < 20 * 3600 && depTime > 16 * 3600))) {
+                                    return true;
+                            }
+                            System.out.println(leg.getRoute().getStartLinkId());
+                    }
+            }
 		}
 		return false;
 	}
