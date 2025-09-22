@@ -10,7 +10,7 @@
 		<!-- Sets MATSim repos & BOM -->
 		<groupId>org.matsim</groupId>
 		<artifactId>matsim-all</artifactId>
-		<version>15.0</version>
+		<version>2026.0-2025w19</version>
 		<relativePath/>
 	</parent>
 
@@ -60,16 +60,6 @@
 			<groupId>org.matsim</groupId>
 			<artifactId>matsim</artifactId>
 			<version>${parent.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-core</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<!-- MATSim Contribs -->
@@ -77,38 +67,29 @@
 			<groupId>org.matsim.contrib</groupId>
 			<artifactId>discrete_mode_choice</artifactId>
 			<version>${parent.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-core</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.matsim.contrib</groupId>
-			<artifactId>roadpricing</artifactId>
-			<version>${parent.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+
+		<!--<dependency> Excluding it as road pricing is not used in the scenario and produce too many errors when rebuild!-->
+			<!-- <groupId>org.matsim.contrib</groupId> -->
+			<!-- <artifactId>roadpricing</artifactId> -->
+			<!-- <version>${parent.version}</version> -->
+		<!-- </dependency> -->
 
 		<!-- Guice -->
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
-			<version>5.1.0</version>
+			<version>7.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.inject.extensions</groupId>
+			<artifactId>guice-assistedinject</artifactId>
+			<version>7.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.inject</groupId>
+			<artifactId>jakarta.inject-api</artifactId>
+			<version>2.0.1</version>
 		</dependency>
 
 		<!-- GeoTools 29.x line) -->
@@ -199,6 +180,10 @@
 				<configuration>
 					<source>21</source>
 					<target>21</target>
+					<excludes>
+						<!-- exclude all roadpricing sources -->
+						<exclude>org/eqasim/jakarta/roadpricing/**</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 
@@ -213,15 +198,33 @@
 						<goals><goal>shade</goal></goals>
 						<configuration>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
+
+							<!-- Optional: don't even pull these artifacts into the fat jar -->
+							<artifactSet>
+								<excludes>
+									<exclude>javax.inject:javax.inject</exclude>
+									<exclude>com.github.jai-imageio:jai-imageio-core</exclude>
+									<exclude>com.github.jai-imageio:jai-imageio-jpeg2000</exclude>
+								</excludes>
+							</artifactSet>
+
 							<transformers>
-								<!-- Merge ServiceLoader descriptors so GeoTools DataStoreFinder works -->
+								<!-- keep general ServiceLoader merging (e.g., for GeoTools) -->
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-								<!-- Set your entry point -->
+								<!-- but *do not* include ImageIO SPI files -->
+								<transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+									<resources>
+										<resource>META-INF/services/javax.imageio.spi.ImageWriterSpi</resource>
+										<resource>META-INF/services/javax.imageio.spi.ImageReaderSpi</resource>
+									</resources>
+								</transformer>
+								<!-- main class -->
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>org.eqasim.jakarta.RunSimulation</mainClass>
 								</transformer>
 							</transformers>
-							<!-- Strip signatures that cause "Invalid signature file digest" -->
+
+							<!-- Global filters so JAI classes/SPI can't sneak in from any dep -->
 							<filters>
 								<filter>
 									<artifact>*:*</artifact>
@@ -229,6 +232,16 @@
 										<exclude>META-INF/*.SF</exclude>
 										<exclude>META-INF/*.DSA</exclude>
 										<exclude>META-INF/*.RSA</exclude>
+										<exclude>javax/inject/**</exclude>
+
+										<!-- Remove any ImageIO SPIs that might point to JAI -->
+										<exclude>META-INF/services/javax.imageio.spi.ImageInputStreamSpi</exclude>
+										<exclude>META-INF/services/javax.imageio.spi.ImageOutputStreamSpi</exclude>
+										<exclude>META-INF/services/javax.imageio.spi.ImageReaderSpi</exclude>
+										<exclude>META-INF/services/javax.imageio.spi.ImageWriterSpi</exclude>
+
+										<!-- Belt-and-suspenders: if any JAI classes sneak in from somewhere else -->
+										<exclude>com/sun/media/imageioimpl/**</exclude>
 									</excludes>
 								</filter>
 							</filters>

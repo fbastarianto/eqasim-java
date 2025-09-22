@@ -34,6 +34,9 @@ import org.matsim.core.config.Config;
 import org.matsim.contribs.discrete_mode_choice.components.utils.home_finder.HomeFinder;
 import org.matsim.contribs.discrete_mode_choice.modules.config.DiscreteModeChoiceConfigGroup;
 import org.matsim.contribs.discrete_mode_choice.modules.config.VehicleTourConstraintConfigGroup;
+import com.google.inject.Scopes;
+import com.google.inject.name.Names;
+import org.matsim.contribs.discrete_mode_choice.components.utils.home_finder.FirstActivityHomeFinder;
 
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -61,6 +64,17 @@ public class JakartaModeChoiceModule extends AbstractEqasimExtension {
 
 	@Override
 	protected void installEqasimExtension() {
+		// Provide required HomeFinder bindings (fixes the Guice "explicit bindings" error)
+		bind(HomeFinder.class)
+				.annotatedWith(Names.named("tour"))
+				.to(FirstActivityHomeFinder.class)
+				.in(Scopes.SINGLETON);
+
+		bind(HomeFinder.class)
+				.annotatedWith(Names.named("trip"))
+				.to(FirstActivityHomeFinder.class)
+				.in(Scopes.SINGLETON);
+
 		bindModeAvailability(MODE_AVAILABILITY_NAME).to(JakartaModeAvailability.class);
 
 		bind(JakartaPersonPredictor.class);

@@ -1,13 +1,9 @@
-
 package org.eqasim.jakarta.eventhandling;
-
-
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.events.LinkEnterEvent;
 import org.matsim.api.core.v01.events.handler.LinkEnterEventHandler;
 import org.matsim.api.core.v01.network.Link;
-import org.matsim.core.utils.charts.XYLineChart;
 import org.matsim.core.utils.io.IOUtils;
 
 import java.io.BufferedWriter;
@@ -15,90 +11,86 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-/**
- * This EventHandler implementation counts the 
- * traffic volume on the link with id number 6 and
- * provides a method to write the hourly volumes
- * to a chart png.
- * @author dgrether
- *
- */
+import java.util.Arrays;
+
 public class MyEventHandler1 implements LinkEnterEventHandler {
+
+	private final Id<Link> LINK_100680 = Id.create("100680", Link.class);
+	private final Id<Link> LINK_199420 = Id.create("199420", Link.class);
 
 	private Map<String, int[]> volumeLink100680;
 	private Map<String, int[]> volumeLink199420;
-
 
 	public MyEventHandler1() {
 		reset(0);
 	}
 
-	
-	
-	private int getSlot(double time){
-		return (int)time/3600;
+	// Hour bin: 0,1,2,... (explicit double division)
+	private int getSlot(double time) {
+		return (int) (time / 3600.0);
 	}
 
 	@Override
 	public void reset(int iteration) {
-		writeChart(volumeLink100680, iteration + "_100680.csv" );
+		writeCsv(volumeLink100680, iteration + "_100680.csv");
 		this.volumeLink100680 = new HashMap<>();
-		writeChart(volumeLink199420, iteration + "_199420.csv" );
+		writeCsv(volumeLink199420, iteration + "_199420.csv");
 		this.volumeLink199420 = new HashMap<>();
 	}
 
 	@Override
 	public void handleEvent(LinkEnterEvent event) {
-		String vehicle_id = event.getVehicleId().toString();
-		String[]vehicleid = vehicle_id.split("_");
-		String mode = "";
-		if (vehicleid.length == 1)
-			mode = "car";
-		else
-		    mode = vehicleid[1];
-		
-		int []vol = null;
-		if (event.getLinkId().equals(Id.create("100680", Link.class))) {
-		 vol = this.volumeLink100680.get(mode);
-		if(vol == null) {
-			vol = new int [24];
-			this.volumeLink100680.put(mode, vol);
+		// Derive mode from vehicle id (e.g. "123_car" -> "car")
+		final String vehicleId = event.getVehicleId().toString();
+		final String[] parts = vehicleId.split("_");
+		final String mode = (parts.length == 1) ? "car" : parts[1];
+
+		final int slot = getSlot(event.getTime());
+		if (slot < 0) return; // safety
+
+		if (event.getLinkId().equals(LINK_100680)) {
+			int[] vol = getAndEnsure(volumeLink100680, mode, slot);
+			vol[slot]++; // now always safe
+		} else if (event.getLinkId().equals(LINK_199420)) {
+			int[] vol = getAndEnsure(volumeLink199420, mode, slot);
+			vol[slot]++;
 		}
-		}
-		if (event.getLinkId().equals(Id.create("199420", Link.class))) {
-			 vol = this.volumeLink199420.get(mode);
-			if(vol == null) {
-				vol = new int [24];
-				this.volumeLink199420.put(mode, vol);
-			}
-			}
-		
-		if (vol != null) {
-			vol[getSlot(event.getTime())]++;
-		}
-	
 	}
 
-
-	public void writeChart(Map<String, int[]> vol, String filename) {
-		if (vol == null)return;
-		BufferedWriter writer = IOUtils.getBufferedWriter(filename);
-        try {
-			writer.write("mode, time, vol\n");
-        for (Entry<String, int[]> e:vol.entrySet()) {
-        	for (int hour = 0; hour < e.getValue().length; hour++) {
-        		writer.write(e.getKey() + "," + hour +"," +  e.getValue()[hour] + "\n");
-        	}
-        }
-        writer.flush();
-        writer.close();
-        
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+	/**
+	 * Ensure an int[] exists for this mode and is long enough to hold 'slot'.
+	 * Starts at 24 bins but grows as needed (e.g., endTime > 24h).
+	 */
+	private static int[] getAndEnsure(Map<String, int[]> map, String mode, int slot) {
+		int[] vol = map.get(mode);
+		if (vol == null) {
+			vol = new int[Math.max(24, slot + 1)];
+			map.put(mode, vol);
+			return vol;
 		}
-        
-		
+		if (slot >= vol.length) {
+			int newLen = Math.max(slot + 1, (int) Math.ceil(vol.length * 1.5));
+			vol = Arrays.copyOf(vol, newLen);
+			map.put(mode, vol);
+		}
+		return vol;
 	}
 
+	private void writeCsv(Map<String, int[]> vol, String filename) {
+		if (vol == null) return;
+		try (BufferedWriter w = IOUtils.getBufferedWriter(filename)) {
+			// inside writeCsv(...)
+			w.write("mode,hour,clock_hour,day,vol\n");
+			for (Entry<String, int[]> e : vol.entrySet()) {
+				int[] arr = e.getValue();
+				for (int hour = 0; hour < arr.length; hour++) {
+					int clockHour = hour % 24;
+					int day = hour / 24;      // 0 for 0–23, 1 for 24–47, etc.
+					w.write(e.getKey() + "," + hour + "," + clockHour + "," + day + "," + arr[hour] + "\n");
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
 }

@@ -5,8 +5,8 @@ import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.population.PopulationFactory;
-import org.matsim.core.config.groups.PlanCalcScoreConfigGroup;
-import org.matsim.core.config.groups.PlansCalcRouteConfigGroup;
+import org.matsim.core.config.groups.ScoringConfigGroup;
+import org.matsim.core.config.groups.RoutingConfigGroup;
 import org.matsim.core.network.NetworkUtils;
 import org.matsim.core.network.algorithms.TransportModeNetworkFilter;
 import org.matsim.core.router.DefaultRoutingModules;
@@ -49,10 +49,10 @@ import java.util.Set;
 	SingleModeNetworksCache singleModeNetworksCache;
 
 	@Inject
-    PlanCalcScoreConfigGroup planCalcScoreConfigGroup;
+	ScoringConfigGroup scoringConfigGroup;
 	
 	@Inject
-	PlansCalcRouteConfigGroup plansCalcRouteConfigGroup ;
+	RoutingConfigGroup routingConfigGroup ;
 
 	@Inject
     Network network;
@@ -95,7 +95,7 @@ import java.util.Set;
 						filteredNetwork,
 						travelDisutilityFactory.createTravelDisutility(travelTime),
 						travelTime);
-		if (!plansCalcRouteConfigGroup.getAccessEgressType().equals(PlansCalcRouteConfigGroup.AccessEgressType.none)) { //if ( plansCalcRouteConfigGroup.isInsertingAccessEgressWalk() ) {
+		if (!routingConfigGroup.getAccessEgressType().equals(RoutingConfigGroup.AccessEgressType.none)) { //if ( plansCalcRouteConfigGroup.isInsertingAccessEgressWalk() ) {
 			return DefaultRoutingModules.createAccessEgressNetworkRouter(TransportMode.motorcycle, //populationFactory,
 					(LeastCostPathCalculator) filteredNetwork, (Scenario) routeAlgo, (Network) scenario, walkRouter, timeInterpretation, multimodalLinkChooser); // plansCalcRouteConfigGroup); // adding (LeastCostPathCalculator), (Scenario), and (Network)
 		} else {

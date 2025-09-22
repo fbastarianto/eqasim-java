@@ -26,7 +26,7 @@ import java.util.List;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.core.utils.io.MatsimXmlWriter;
-import org.matsim.core.utils.io.UncheckedIOException;
+import java.io.UncheckedIOException;
 import org.matsim.core.utils.misc.Time;
 import org.eqasim.jakarta.roadpricing.JakartaMcRoadPricingSchemeImpl.Cost;
 

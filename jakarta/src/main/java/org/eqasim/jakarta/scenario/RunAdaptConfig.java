@@ -18,7 +18,7 @@ import org.matsim.core.config.CommandLine.ConfigurationException;
 import org.matsim.core.config.CommandLine;
 import org.matsim.core.config.CommandLine.ConfigurationException;
 import org.matsim.core.config.Config;
-import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ModeParams;
+import org.matsim.core.config.groups.ScoringConfigGroup.ModeParams;
 import org.matsim.core.config.ConfigUtils; // NA in eqasim GitHub
 import org.matsim.core.config.groups.QSimConfigGroup; // NA in eqasim GitHub
 import org.matsim.core.config.groups.QSimConfigGroup.LinkDynamics; // NA in eqasim GitHub
@@ -85,12 +85,12 @@ public class RunAdaptConfig {
 
 		//QsimConfigGroup eqasimConfig = QsimConfigGroup.get(config);	
 		
-		List<String> networkModes = new LinkedList<>(config.plansCalcRoute().getNetworkModes());
+		List<String> networkModes = new LinkedList<>(config.routing().getNetworkModes());
 		networkModes.add("taxi");
 		networkModes.add("carodt");
 		networkModes.add("mcodt");
 		networkModes.add("motorcycle");
-		config.plansCalcRoute().setNetworkModes(networkModes);
+		config.routing().setNetworkModes(networkModes);
 		
 		
 		//RunAdaptConfig.QsimConfigGroup().getConfig().setSeepMode
@@ -98,16 +98,16 @@ public class RunAdaptConfig {
 		
 		
 		ModeParams taxiParams = new ModeParams("taxi");
-		config.planCalcScore().addModeParams(taxiParams);
+		config.scoring().addModeParams(taxiParams);
 		
 		ModeParams motorcycleParams = new ModeParams("motorcycle");
-		config.planCalcScore().addModeParams(motorcycleParams);
+		config.scoring().addModeParams(motorcycleParams);
 		
 		ModeParams carodtParams = new ModeParams("carodt");
-		config.planCalcScore().addModeParams(carodtParams);
+		config.scoring().addModeParams(carodtParams);
 		
 		ModeParams mcodtParams = new ModeParams("mcodt");
-		config.planCalcScore().addModeParams(mcodtParams);
+		config.scoring().addModeParams(mcodtParams);
 		
 	}
 

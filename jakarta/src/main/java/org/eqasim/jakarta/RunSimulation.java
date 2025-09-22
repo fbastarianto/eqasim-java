@@ -23,7 +23,7 @@ import org.eqasim.jakarta.eventhandling.MyEventHandler1;
 //import org.eqasim.jakarta.eventhandling.MyEventHandler6;
 //import org.eqasim.jakarta.eventhandling.MyEventHandler7;
 import org.eqasim.jakarta.mode_choice.JakartaModeChoiceModule;
-import org.eqasim.jakarta.roadpricing.JakartaMcRoadPricingModule;
+//import org.eqasim.jakarta.roadpricing.JakartaMcRoadPricingModule;
 
 import org.matsim.core.controler.AbstractModule;
 
@@ -66,11 +66,11 @@ public class RunSimulation {
 		//availableModes.add("car_odt");
 		//dmcConfig.getCarModeAvailabilityConfig().setAvailableModes(availableModes);
 		
-		config.controler().setOutputDirectory(outputDirectory);
+		//config.controler().setOutputDirectory(outputDirectory); // NA in github
 		
 		Controler controller = new Controler(scenario);
 		configurator.configureController(controller);//EqasimConfigurator.configureController(controller);
-		controller.addOverridingModule(new JakartaMcRoadPricingModule());
+		//controller.addOverridingModule(new JakartaMcRoadPricingModule());
 		// add the events handlers
 		controller.addOverridingModule(new AbstractModule(){
 			@Override public void install() {

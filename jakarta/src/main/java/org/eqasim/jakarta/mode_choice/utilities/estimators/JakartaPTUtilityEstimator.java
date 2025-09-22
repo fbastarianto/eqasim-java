@@ -50,7 +50,7 @@ public class JakartaPTUtilityEstimator  extends PtUtilityEstimator{
 		double utility = 0.0;
 
 		// Handle non-commuters (generic parameters)
-		if (subpopulation == null || subpopulation.equals("non-commuters")) { //subpopulation == "non-commuters" ???
+		if (subpopulation == null || subpopulation.equals("non_commuters")) { //subpopulation == "non-commuters" ???
 			utility += parameters.jPT.generic.constant;
 			utility += estimateAccessEgressTimeUtility(variables_pt);
 			utility += estimateInVehicleTimeUtility(variables_pt);

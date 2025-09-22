@@ -131,7 +131,6 @@ public class JakartaModeParameters extends ModeParameters {
 		// Car
 		parameters.car.alpha_u = -0.50;
 		parameters.car.betaTravelTime_u_min = -1.24/100;
-
 		parameters.car.additionalAccessEgressWalkTime_min = 0.0;
 		parameters.car.constantParkingSearchPenalty_min = 0.0;
 		//parameters.jCar.alpha_car_city = -0.1597;
