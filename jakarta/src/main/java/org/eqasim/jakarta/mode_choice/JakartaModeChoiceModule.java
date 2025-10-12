@@ -77,6 +77,10 @@ public class JakartaModeChoiceModule extends AbstractEqasimExtension {
 
 		bindModeAvailability(MODE_AVAILABILITY_NAME).to(JakartaModeAvailability.class);
 
+		// Make my custom PT predictor available for injection
+		bind(org.eqasim.jakarta.mode_choice.utilities.predictors.JakartaPtPredictor.class)
+				.in(Scopes.SINGLETON);
+
 		bind(JakartaPersonPredictor.class);
 		bind(JakartaCarodtPredictor.class);
 		bind(JakartaMcodtPredictor.class);

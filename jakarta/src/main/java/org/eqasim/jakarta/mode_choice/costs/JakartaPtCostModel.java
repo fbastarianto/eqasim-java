@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 
 //import ch.ethz.matsim.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
-public class JakartaPtCostModel implements CostModel {
+public class JakartaPtCostModel implements CostModel {  // implements Means the class must define all methods from CostModel
 	private final JakartaPersonPredictor predictor;
 	private final JakartaCostParameters parameters;
 	private final Scenario scenario;

@@ -85,6 +85,9 @@ public class RunSimulation {
 			  	
 				
 				});
+		// ensure PT predictor accepts motorcycle/mcodt/carodt feeders
+		//controller.addOverridingModule(new org.eqasim.jakarta.guice.JakartaFeederModule());
+
 		//controller.addOverridingModule(new RoadPricingModule());
 		//controller.addOverridingModule(new MyEventHandler1());
 		controller.addOverridingModule(new EqasimAnalysisModule());
