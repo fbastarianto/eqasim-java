@@ -25,6 +25,15 @@ public class JakartaModeParameters extends ModeParameters {
 			public double cost = 0.0;
 		}
 
+		// NEW: ODT fare parameters for feeders
+		public static class ODT {
+			public double base_mcodt = 0.0;     // MU per mcodt feeder leg (flat)
+			public double per_min_mcodt = 0.0;  // MU per minute on mcodt feeder
+			public double base_carodt = 0.0;    // MU per carodt feeder leg (flat)
+			public double per_min_carodt = 0.0; // MU per minute on carodt feeder
+		}
+		public ODT odt = new ODT();
+
 		// Add four latent class parameter sets
 		public LatentClassParameters class1 = new LatentClassParameters();
 		public LatentClassParameters class2 = new LatentClassParameters();
