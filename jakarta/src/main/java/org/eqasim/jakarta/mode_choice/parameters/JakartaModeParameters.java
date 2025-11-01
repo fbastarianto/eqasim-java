@@ -16,15 +16,6 @@ public class JakartaModeParameters extends ModeParameters {
 		//	public double alpha_pt_city = 0.0;
 		public double alpha_age = 0.0;
 
-		// New nested class for latent class parameters
-		public static class LatentClassParameters {
-			public double constant = 0.0;
-			public double accessTime = 0.0;
-			public double inVehicleTime = 0.0;
-			public double egressTime = 0.0;
-			public double cost = 0.0;
-		}
-
 		// NEW: ODT fare parameters for feeders
 		public static class ODT {
 			public double base_mcodt = 0.0;     // MU per mcodt feeder leg (flat)
@@ -33,15 +24,6 @@ public class JakartaModeParameters extends ModeParameters {
 			public double per_min_carodt = 0.0; // MU per minute on carodt feeder
 		}
 		public ODT odt = new ODT();
-
-		// Add four latent class parameter sets
-		public LatentClassParameters class1 = new LatentClassParameters();
-		public LatentClassParameters class2 = new LatentClassParameters();
-		public LatentClassParameters class3 = new LatentClassParameters();
-		public LatentClassParameters class4 = new LatentClassParameters();
-
-		// Generic parameters for non-classified individuals
-		public LatentClassParameters generic = new LatentClassParameters();
 
 	}
 	
@@ -152,28 +134,6 @@ public class JakartaModeParameters extends ModeParameters {
 		parameters.pt.betaAccessEgressTime_u_min = -1.49/100;
 		//parameters.jPT.alpha_pt_city = 0.0;
 		//parameters.jPT.alpha_age = 0.0;
-
-		// PT Latent Class Parameters
-		// Class 1: Non-private motorised
-		parameters.jPT.class1.accessTime = -0.013;
-		parameters.jPT.class1.inVehicleTime = -0.023;
-		parameters.jPT.class1.egressTime = -0.069;
-		parameters.jPT.class1.cost = -0.006;
-
-		// Class 2: Young cost-sensitive
-		parameters.jPT.class2.accessTime = -0.461;
-		parameters.jPT.class2.inVehicleTime = 0.156;  // Note positive value
-		parameters.jPT.class2.egressTime = -0.450;
-		parameters.jPT.class2.cost = -0.183;
-
-		// Class 3: Affluent car-dependent
-		parameters.jPT.class3.cost = -0.019;  // Only cost considered (other n.e.)
-
-		// Class 4: Young time-sensitive
-		parameters.jPT.class4.accessTime = -0.052;
-		parameters.jPT.class4.inVehicleTime = -0.010;
-		parameters.jPT.class4.egressTime = -0.056;
-		parameters.jPT.class4.cost = 0.030;   // Note positive value
 		
 		// Bike
 		parameters.bike.alpha_u = -4.44;

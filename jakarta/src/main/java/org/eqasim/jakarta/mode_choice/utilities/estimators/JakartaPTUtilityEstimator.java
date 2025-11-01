@@ -120,62 +120,26 @@ public class JakartaPTUtilityEstimator extends PtUtilityEstimator {
 		JakartaPersonVariables variables = predictor.predictVariables(person, trip, elements);
 		PtVariables variables_pt = jakartaPtPredictor.predictVariables(person, trip, elements);
 
-		String subpopulation = (String) person.getAttributes().getAttribute("subpopulation");
 		double utility = 0.0;
 
-		// Generic (non-commuters)
-		if (subpopulation == null || subpopulation.equals("non_commuters")) {
-			utility += parameters.jPT.generic.constant;
-			utility += estimateAccessEgressTimeUtility(variables_pt);
-			utility += estimateInVehicleTimeUtility(variables_pt);
-			utility += estimateWaitingTimeUtility(variables_pt);
-			utility += estimateMonetaryCostUtility(variables_pt);
-			return utility;
-		}
-
-		// Latent classes
-		switch (subpopulation) {
-			case "Class1_non_private_motorised_commuters":
-				utility += parameters.jPT.class1.constant;
-				utility += parameters.jPT.class1.accessTime     * variables_pt.accessEgressTime_min;
-				utility += parameters.jPT.class1.inVehicleTime  * variables_pt.inVehicleTime_min;
-				utility += parameters.jPT.class1.egressTime     * variables_pt.accessEgressTime_min;
-				utility += parameters.jPT.class1.cost           * variables_pt.cost_MU;
-				break;
-
-			case "Class2_young_cost_sensitive_commuters":
-				utility += parameters.jPT.class2.constant;
-				utility += parameters.jPT.class2.accessTime     * variables_pt.accessEgressTime_min;
-				utility += parameters.jPT.class2.inVehicleTime  * variables_pt.inVehicleTime_min;
-				utility += parameters.jPT.class2.egressTime     * variables_pt.accessEgressTime_min;
-				utility += parameters.jPT.class2.cost           * variables_pt.cost_MU;
-				break;
-
-			case "Class3_affluent_car_dependent_commuters":
-				utility += parameters.jPT.class3.constant;
-				utility += parameters.jPT.class3.cost           * variables_pt.cost_MU; // others n.e.
-				break;
-
-			case "Class4_young_time_sensitive_commuters":
-				utility += parameters.jPT.class4.constant;
-				utility += parameters.jPT.class4.accessTime     * variables_pt.accessEgressTime_min;
-				utility += parameters.jPT.class4.inVehicleTime  * variables_pt.inVehicleTime_min;
-				utility += parameters.jPT.class4.egressTime     * variables_pt.accessEgressTime_min;
-				utility += parameters.jPT.class4.cost           * variables_pt.cost_MU;
-				break;
-
-			default:
-				throw new IllegalArgumentException("Unknown subpopulation: " + subpopulation);
-		}
+		utility += estimateConstantUtility();
+		utility += estimateAccessEgressTimeUtility(variables_pt);
+		utility += estimateInVehicleTimeUtility(variables_pt);
+		utility += estimateWaitingTimeUtility(variables_pt);
+		utility += estimateLineSwitchUtility(variables_pt);
+//		utility += estimateRegionalUtility(variables);
+		utility += estimateAgeUtility(person);
+		utility += estimateMonetaryCostUtility(variables_pt) * EstimatorUtils.interaction(variables.hhlIncome,
+				parameters.jAvgHHLIncome.avg_hhl_income, parameters.jIncomeElasticity.lambda_income);
 
 		// Income elasticity on cost (generic multiplier)
-		JakartaPersonVariables personVariables = new JakartaPersonVariables(person);
-		utility += parameters.jPT.generic.cost * variables_pt.cost_MU *
-				EstimatorUtils.interaction(
-						personVariables.hhlIncome,
-						parameters.jAvgHHLIncome.avg_hhl_income,
-						parameters.jIncomeElasticity.lambda_income
-				);
+		//JakartaPersonVariables personVariables = new JakartaPersonVariables(person);
+		//utility += parameters.jPT.generic.cost * variables_pt.cost_MU *
+		//		EstimatorUtils.interaction(
+		//				personVariables.hhlIncome,
+		//				parameters.jAvgHHLIncome.avg_hhl_income,
+		//				parameters.jIncomeElasticity.lambda_income
+		//		);
 
 		// Optionally: include age utility if you want it to apply to PT
 		// utility += estimateAgeUtility(person);

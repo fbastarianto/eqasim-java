@@ -16,8 +16,11 @@
 
 	<groupId>org.eqasim</groupId>
 	<artifactId>jakarta</artifactId>
-	<version>2.3.0</version>   <!-- this controls the JAR name.
-	                            Ver 1.0.0: integrating LCCM
+	<version>0.1.0</version>   <!-- this controls the JAR name.
+	                            Ver:
+	                            0.0.0: Baseline
+	                            0.1.0: Baseline with FLM (2.3.0 configuration)
+	                            1.0.0: integrating LCCM
 	                            2.0.0: Initial FLM
 	                            2.1.0: FLM + NoMcEgressExceptHome (tripConstraints) + teleportedModes + addingCostToFeeders
 	                            2.2.0: noTeleported
