@@ -9,7 +9,6 @@ import org.eqasim.core.simulation.mode_choice.AbstractEqasimExtension;
 import org.eqasim.core.simulation.mode_choice.ParameterDefinition;
 import org.eqasim.core.simulation.mode_choice.cost.CostModel;
 import org.eqasim.core.simulation.mode_choice.parameters.ModeParameters;
-import org.eqasim.jakarta.mode_choice.constraints.NoMotorcycleEgressExceptHome;
 import org.eqasim.jakarta.mode_choice.constraints.VehicleTourConstraintWithCarPassenger;
 import org.eqasim.jakarta.mode_choice.constraints.WalkDurationConstraint;
 import org.eqasim.jakarta.mode_choice.costs.JakartaCarCostModel;
@@ -79,8 +78,8 @@ public class JakartaModeChoiceModule extends AbstractEqasimExtension {
 		bindModeAvailability(MODE_AVAILABILITY_NAME).to(JakartaModeAvailability.class);
 
 		// Make my custom PT predictor available for injection
-		bind(org.eqasim.jakarta.mode_choice.utilities.predictors.JakartaPtPredictor.class)
-				.in(Scopes.SINGLETON);
+		//bind(org.eqasim.jakarta.mode_choice.utilities.predictors.JakartaPtPredictor.class)
+		//		.in(Scopes.SINGLETON);
 
 		bind(JakartaPersonPredictor.class);
 		bind(JakartaCarodtPredictor.class);
@@ -90,8 +89,8 @@ public class JakartaModeChoiceModule extends AbstractEqasimExtension {
 		.to(VehicleTourConstraintWithCarPassenger.Factory.class);
 		bindTripConstraintFactory("WalkDurationConstraint")
 		.to(WalkDurationConstraint.Factory.class);
-		bindTripConstraintFactory("NoMotorcycleEgressExceptHome")
-				.to(NoMotorcycleEgressExceptHome.Factory.class);
+		//bindTripConstraintFactory("NoMotorcycleEgressExceptHome")
+		//		.to(NoMotorcycleEgressExceptHome.Factory.class);
 
 		bindCostModel(CAR_COST_MODEL_NAME).to(JakartaCarCostModel.class);
 		bindCostModel(PT_COST_MODEL_NAME).to(JakartaPtCostModel.class);
