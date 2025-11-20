@@ -21,7 +21,7 @@ import com.google.inject.Inject;
  *
  * Purpose:
  *  - Keep eqasim's standard PT variables but make sure access/egress time
- *    also accounts for motorised feeders (motorcycle, mcodt, carodt),
+ *    also accounts for motorised feeders (motorcycle, mcodt),
  *    in addition to (non_network_)walk.
  *
  * How it works:
@@ -34,7 +34,7 @@ import com.google.inject.Inject;
  * Notes:
  *  - This class does NOT split bus vs rail components. If we need that,
  *    we would need a custom variables class (e.g., LeedsPtVariables).
- *  - If we want to include monetary costs for ODT feeders (mcodt/carodt),
+ *  - If we want to include monetary costs for ODT feeders (mcodt),
  *    we can extend this to add a fare component onto v.cost_MU.
  */
 
@@ -61,8 +61,8 @@ public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
 
         // 2) From original elements: feeder mins and ODT mins/counts
         double extraAccessEgress_min = 0.0;
-        double mcodtMin = 0.0, carodtMin = 0.0;
-        int mcodtLegs = 0, carodtLegs = 0;
+        double mcodt_km = 0.0; // double mcodtMin = 0.0,
+        int mcodtLegs = 0; //int mcodtLegs = 0,
 
         for (int i = 0; i < elements.size(); i++) {
             PlanElement pe = elements.get(i);
@@ -74,8 +74,7 @@ public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
                     TransportMode.walk.equals(mode)
                             || "non_network_walk".equals(mode)
                             || "motorcycle".equals(mode)
-                            || "mcodt".equals(mode)
-                            || "carodt".equals(mode);
+                            || "mcodt".equals(mode);
             if (!isFeeder) continue;
 
             boolean touchesPt = false;
@@ -91,23 +90,23 @@ public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
             if (Double.isNaN(tt_s) || tt_s <= 0) continue;
             double tt_min = tt_s / 60.0;
 
-            extraAccessEgress_min += tt_min;
+            //extraAccessEgress_min += tt_min;
 
+            // distance-based ODT fare
             if ("mcodt".equals(mode)) {
-                mcodtMin += tt_min;
+                double dist_m = 0.0;
+                if (leg.getRoute() != null && !Double.isNaN(leg.getRoute().getDistance()))
+                    dist_m = leg.getRoute().getDistance();
+
+                mcodt_km += dist_m / 1000.0;
                 mcodtLegs++;
-            } else if ("carodt".equals(mode)) {
-                carodtMin += tt_min;
-                carodtLegs++;
             }
         }
 
         // 3) ODT fares (MU) from parameters
         double odtCostMU =
-                params.jPT.odt.base_mcodt   * mcodtLegs
-                        + params.jPT.odt.per_min_mcodt * mcodtMin
-                        + params.jPT.odt.base_carodt   * carodtLegs
-                        + params.jPT.odt.per_min_carodt * carodtMin;
+                params.jPT.odt.base_mcodt * mcodtLegs
+                        + params.jPT.odt.per_km_mcodt * mcodt_km; //params.jPT.odt.per_min_mcodt * mcodtMin
 
         // 4) Return updated PtVariables
         return new PtVariables(

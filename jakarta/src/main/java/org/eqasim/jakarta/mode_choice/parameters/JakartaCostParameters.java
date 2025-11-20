@@ -33,12 +33,12 @@ public class JakartaCostParameters implements ParameterDefinition {
 	public static JakartaCostParameters buildDefault() {
 		JakartaCostParameters parameters = new JakartaCostParameters();
 
-		parameters.carCost_KIDR_km = 2.95;
+		parameters.carCost_KIDR_km = 2.95; // 2950 IDR/km
 		parameters.carCharging_KIDR_km = 5.0;
 		parameters.mcCharging_KIDR_km = 2.5;
 		
 		
-		parameters.motorcycleCost_KIDR_km = 0.59;
+		parameters.motorcycleCost_KIDR_km = 0.59; // 590 IDR/km
 		
 	
 		
