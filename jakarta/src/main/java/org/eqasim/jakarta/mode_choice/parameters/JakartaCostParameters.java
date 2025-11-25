@@ -30,6 +30,8 @@ public class JakartaCostParameters implements ParameterDefinition {
 	public double carodtMinCost_KIDR;
 	public double mcodtMinCost_KIDR;
 
+
+
 	public static JakartaCostParameters buildDefault() {
 		JakartaCostParameters parameters = new JakartaCostParameters();
 
@@ -59,9 +61,9 @@ public class JakartaCostParameters implements ParameterDefinition {
 		//parameters.mcodtCostPerMin_KIDR = 0.38;//0.48;
 		parameters.mcodtCostPerkm_KIDR = 2.5;//2.4;
 		parameters.mcodtMinCost_KIDR = 6.0;//2.4;
-		
-		
-		
+
+
+
 		return parameters;
 	}
 }

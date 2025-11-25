@@ -22,11 +22,11 @@ public class JakartaMcodtCostModel extends AbstractCostModel {
 
 		this.costParameters = costParameters;
 	}
-	
+
 	public double getTotalTravelTime(List<? extends PlanElement> elements) {
 		double total_time = 0.0;
 		String mode = "mcodt";
-		
+
 		for (PlanElement element : elements) {
 			if (element instanceof Leg) {
 				Leg leg = (Leg) element;
@@ -43,11 +43,11 @@ public class JakartaMcodtCostModel extends AbstractCostModel {
 
 	@Override
 	public double calculateCost_MU(Person person, DiscreteModeChoiceTrip trip, List<? extends PlanElement> elements) {
-		
+
 		double pick_up_fee = costParameters.mcodtPickUpFee_KIDR;
 		double distance_cost = costParameters.mcodtCostPerkm_KIDR * getInVehicleDistance_km(elements);
 		//double time_cost = costParameters.taxiCostPerMin_BRL * getTotalTravelTime(elements);
-		
+
 		return Math.max(pick_up_fee + distance_cost, costParameters.mcodtMinCost_KIDR);
 	}
 

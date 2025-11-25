@@ -16,13 +16,14 @@
 
 	<groupId>org.eqasim</groupId>
 	<artifactId>jakarta</artifactId>
-	<version>2.3.1</version>   <!-- this controls the JAR name.
+	<version>2.4.0</version>   <!-- this controls the JAR name.
 	                            Ver 1.0.0: integrating LCCM
 	                            2.0.0: Initial FLM
 	                            2.1.0: FLM + NoMcEgressExceptHome (tripConstraints) + teleportedModes + addingCostToFeeders
 	                            2.2.0: noTeleported
 	                            2.3.0: two guards in the PtUtilityEstimator
-	                            2.3.1: 2.3.0 version but without carodt as feeders + using Rp per km instead of Rp per minute for feeder cost -->
+	                            2.3.1: 2.3.0 version but without carodt as feeders + using Rp per km instead of Rp per minute for feeder cost
+								2.4.0: fixing the JakartaPtPredictor.java to correctly detect feeder and then reduce generalised pt cost by giving PT subsidy when using mcODT paired with public transit. -->
 
 	<repositories>
 		<repository>

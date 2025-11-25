@@ -31,6 +31,9 @@ public class JakartaModeParameters extends ModeParameters {
 			public double per_km_mcodt = 0.0;  // MU per km on mcodt feeder
 			//public double base_carodt = 0.0;    // MU per carodt feeder leg (flat)
 			//public double per_min_carodt = 0.0; // MU per minute on carodt feeder
+
+			// NEW: share of mcodt feeder cost used as PT voucher (0.25 = 25% discount)
+			public double subsidyShare_mcodt = 0.0;
 		}
 		public ODT odt = new ODT();
 
