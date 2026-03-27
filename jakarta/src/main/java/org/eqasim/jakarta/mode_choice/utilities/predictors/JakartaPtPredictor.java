@@ -169,8 +169,12 @@ public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
         double discountMU = subsidyShare * odtCostMU;
 
         // Optional safety: avoid making cost wildly negative
-        // double maxDiscountMU = 5.0; // or something calibrated
-        // if (discountMU > maxDiscountMU) discountMU = maxDiscountMU;
+        double maxDiscountMU = params.jPT.odt.maxDiscountMU_mcodt; // or something calibrated in the yml file
+
+        // Apply cap
+        if (discountMU > maxDiscountMU) {
+            discountMU = maxDiscountMU;
+        }
 
         // double newCostMU = v.cost_MU - discountMU;
 

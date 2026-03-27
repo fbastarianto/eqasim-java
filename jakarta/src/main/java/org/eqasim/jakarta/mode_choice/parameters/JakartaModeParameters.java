@@ -34,6 +34,8 @@ public class JakartaModeParameters extends ModeParameters {
 
 			// NEW: share of mcodt feeder cost used as PT voucher (0.25 = 25% discount)
 			public double subsidyShare_mcodt = 0.0;
+			// NEW: cap on the voucher (MU). A default of ∞ means “no cap” (same as setting 9999 or 1e12 in YAML).
+			public double maxDiscountMU_mcodt = Double.POSITIVE_INFINITY;
 		}
 		public ODT odt = new ODT();
 
