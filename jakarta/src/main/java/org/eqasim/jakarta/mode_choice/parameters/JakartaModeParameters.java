@@ -143,7 +143,7 @@ public class JakartaModeParameters extends ModeParameters {
 		// Walk
 		parameters.walk.alpha_u = -2.50;
 		parameters.walk.betaTravelTime_u_min = -0.52/100;
-		parameters.jWalk.alpha_age = 1.03/100;		//parameters.jWalk.alpha_walk_city = 0.0;
+		//parameters.jWalk.alpha_age = 1.03/100;		// age is not included in the utility formula of walk alternative
 		
 		//Carodt
 		//parameters.jCarodt.alpha_carodt_city = 0.0;
