@@ -41,12 +41,20 @@ public class JakartaMcodtUtilityEstimator implements UtilityEstimator {
 
 		utility += estimateConstantUtility();
 		utility += estimateTravelTimeUtility(variables_mcodt);
-		utility += estimateAccessEgressTimeUtility(variables_mcodt);
-		utility += parameters.jMcodt.alpha_age * variables.age ;
-		if (variables.sex == "f")
-			utility += 0.0;
-		else
-			utility += parameters.jMcodt.alpha_sex	;
+
+		// utility += estimateAccessEgressTimeUtility(variables_mcodt); // not used in R utility
+
+		// b_age_taxi_rh * AGE
+		utility += parameters.jMcodt.alpha_age * variables.age;
+
+		// b_female_rh * (SEX == 2)
+		if ("f".equals(variables.sex))
+			utility += parameters.jMcodt.alpha_sex; // females receive the coefficient and males receive zero
+
+		//if (variables.sex == "f")
+		//	utility += 0.0;
+		//else
+		//	utility += parameters.jMcodt.alpha_sex	;
 		//if (variables.hhlIncome == 0.0)
 		//	utility += estimateMonetaryCostUtility(variables_mcodt)
 		utility += estimateMonetaryCostUtility(variables_mcodt) * EstimatorUtils.interaction(variables.hhlIncome, 
