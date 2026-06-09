@@ -41,6 +41,12 @@ public class JakartaMotorcycleUtilityEstimator implements UtilityEstimator {
 		return parameters.walk.betaTravelTime_u_min * variables.accessEgressTime_min;
 	}
 
+	//protected double estimateMonetaryCostUtility(MotorcycleVariables variables) { // REMOVED >> Cost sensitivity varies by DISTANCE
+	//	return parameters.betaCost_u_MU * EstimatorUtils.interaction(
+	//			variables.euclideanDistance_km,
+	//			parameters.referenceEuclideanDistance_km,
+	//			parameters.lambdaCostEuclideanDistance) * variables.cost_MU;
+
 	protected double estimateMonetaryCostUtility(MotorcycleVariables variables) {
 		return parameters.betaCost_u_MU * EstimatorUtils.interaction(variables.euclideanDistance_km,
 				parameters.referenceEuclideanDistance_km, parameters.lambdaCostEuclideanDistance) * variables.cost_MU;
