@@ -8,6 +8,8 @@ public class JakartaModeParameters extends ModeParameters {
 	}
 	
 	public class JakartaCarParameters {
+		public double alpha_age = 0.0;
+		public double betaTravelDistance_km = 0.0; // new parameter
 		//public double alpha_car_city = 0.0;
 	}
 	
