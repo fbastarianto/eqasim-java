@@ -57,8 +57,17 @@ public class JakartaMcodtUtilityEstimator implements UtilityEstimator {
 		//	utility += parameters.jMcodt.alpha_sex	;
 		//if (variables.hhlIncome == 0.0)
 		//	utility += estimateMonetaryCostUtility(variables_mcodt)
-		utility += estimateMonetaryCostUtility(variables_mcodt) * EstimatorUtils.interaction(variables.hhlIncome, 
-				parameters.jAvgHHLIncome.avg_hhl_income, parameters.jIncomeElasticity.lambda_income);
+
+		// b_tc_value * tc_mc_odt_single
+		utility += estimateMonetaryCostUtility(variables_mcodt) * EstimatorUtils.interaction(
+				variables.hhlIncome,
+				parameters.jAvgHHLIncome.avg_hhl_income,
+				parameters.jIncomeElasticity.lambda_income);
+
+		// b_short_dist_mode * (td_mc_single / 1000)
+		utility += parameters.jMcodt.betaShortDistance_km
+				* variables_mcodt.euclideanDistance_km;
+
 		//	* (parameters.jAvgHHLIncome.avg_hhl_income / 1.0);
 		//else
 		//	utility += estimateMonetaryCostUtility(variables_mcodt)
