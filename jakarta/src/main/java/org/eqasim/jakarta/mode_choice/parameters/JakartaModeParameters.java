@@ -96,6 +96,7 @@ public class JakartaModeParameters extends ModeParameters {
 		public double betaAccessEgressWalkTime_min = 0.0;
 		public double betaWaitingTime_u_min = 0.0;
 		public double alpha_u = 0.0;
+		public double betaShortDistance_km = 0.0;
 		
 	//	public JakartaMotorcycleParameters() {
 	//		this.alpha_motorcycle_city = 0.0;
