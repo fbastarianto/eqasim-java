@@ -17,6 +17,7 @@ public class JakartaModeParameters extends ModeParameters {
 		// Existing parameter (keep for backward compatibility)
 		//	public double alpha_pt_city = 0.0;
 		public double alpha_age = 0.0;
+		public double alpha_fulltime = 0.0; // new parameter
 
 		// NEW: ODT fare parameters for feeders
 		public static class ODT {
