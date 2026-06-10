@@ -57,9 +57,20 @@ public class JakartaPTUtilityEstimator extends PtUtilityEstimator {
 		utility += estimateWaitingTimeUtility(variables_pt);
 		utility += estimateLineSwitchUtility(variables_pt);
 //		utility += estimateRegionalUtility(variables);
-		utility += estimateAgeUtility(person);
-		utility += estimateMonetaryCostUtility(variables_pt) * EstimatorUtils.interaction(variables.hhlIncome,
-				parameters.jAvgHHLIncome.avg_hhl_income, parameters.jIncomeElasticity.lambda_income);
+
+		// b_age_pt * AGE
+		// utility += estimateAgeUtility(person); this one doesn't capture continuous age effect
+		utility += parameters.jPT.alpha_age * variables.age;
+
+		// Cost with income elasticity
+		utility += estimateMonetaryCostUtility(variables_pt) * EstimatorUtils.interaction(
+				variables.hhlIncome,
+				parameters.jAvgHHLIncome.avg_hhl_income,
+				parameters.jIncomeElasticity.lambda_income);
+
+		// b_fulltime_pt * (S_OC == 1)
+		if (variables.employment == 1)
+			utility += parameters.jPT.alpha_fulltime;
 
 		// Income elasticity on cost (generic multiplier)
 		//JakartaPersonVariables personVariables = new JakartaPersonVariables(person);
