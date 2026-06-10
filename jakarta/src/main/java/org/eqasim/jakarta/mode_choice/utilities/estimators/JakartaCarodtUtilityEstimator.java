@@ -78,6 +78,11 @@ public class JakartaCarodtUtilityEstimator implements UtilityEstimator {
 				parameters.referenceEuclideanDistance_km, parameters.lambdaCostEuclideanDistance)  * variables_Carodt.cost_MU;
 	}
 
+	//protected double estimateMonetaryCostUtility(CarodtVariables variables_Carodt) {
+	//	return parameters.betaCost_u_MU * EstimatorUtils.interaction(variables_Carodt.euclideanDistance_km,
+	//			parameters.referenceEuclideanDistance_km, parameters.lambdaCostEuclideanDistance)  * variables_Carodt.cost_MU;
+	//}
+
 	
 	protected double estimateAccessEgressTimeUtility(CarodtVariables variables_Carodt) {
 		return parameters.jCarodt.betaAccessEgressWalkTime_min * variables_Carodt.accessEgressTime_min;
