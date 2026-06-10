@@ -79,6 +79,7 @@ public class JakartaModeParameters extends ModeParameters {
 		public double betaWaitingTime_u_min = 0.0;
 		public double alpha_u = 0.0;
 		public double alpha_sex = 0.0;
+		public double betaShortDistance_km = 0.0;
 		
 	//	public JakartaMcodtParameters() //{
 			//this.alpha_mcodt_city = 0.0;
