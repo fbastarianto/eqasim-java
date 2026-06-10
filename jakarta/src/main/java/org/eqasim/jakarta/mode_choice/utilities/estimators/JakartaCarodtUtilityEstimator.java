@@ -48,10 +48,14 @@ public class JakartaCarodtUtilityEstimator implements UtilityEstimator {
 
 		// b_age_taxi_rh * AGE
 		utility += parameters.jCarodt.alpha_age * variables.age;
-		if (variables.sex == "f")
-			utility += 0.0;
-		else
-			utility += parameters.jCarodt.alpha_sex	;
+
+		// b_female_rh * (SEX == 2)
+		if ("f".equals(variables.sex))
+			utility += parameters.jCarodt.alpha_sex;
+		//if (variables.sex == "f")
+		//	utility += 0.0;
+		//else
+		//	utility += parameters.jCarodt.alpha_sex	;
 		//if (variables.hhlIncome == 0.0)
 		utility += estimateMonetaryCostUtility(variables_Carodt) * EstimatorUtils.interaction(variables.hhlIncome, 
 				parameters.jAvgHHLIncome.avg_hhl_income, parameters.jIncomeElasticity.lambda_income);
