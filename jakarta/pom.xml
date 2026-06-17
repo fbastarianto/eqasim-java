@@ -16,7 +16,7 @@
 
 	<groupId>org.eqasim</groupId>
 	<artifactId>jakarta</artifactId>
-	<version>0.0.0</version>   <!-- this controls the JAR name.
+	<version>0.2.0</version>   <!-- this controls the JAR name.
 	                            Ver:
 	                            0.0.0: Baseline
 	                            0.1.0: Baseline with FLM (2.3.0 configuration)
