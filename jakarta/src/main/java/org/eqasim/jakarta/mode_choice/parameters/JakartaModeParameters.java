@@ -190,6 +190,7 @@ public class JakartaModeParameters extends ModeParameters {
 		//parameters.jMotorcycle.betaAccessEgressWalkTime_min = 0.0;
 		parameters.jMotorcycle.alpha_u = 0.0;
 		parameters.jMotorcycle.alpha_age = -0.83/100;
+		parameters.jMotorcycle.betaShortDistance_km = -0.03; // this parameter is not statistically significant, yml set to 0.0
 		
 		
 		
