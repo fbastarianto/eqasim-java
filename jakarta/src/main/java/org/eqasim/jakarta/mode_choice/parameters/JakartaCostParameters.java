@@ -14,7 +14,7 @@ public class JakartaCostParameters implements ParameterDefinition {
 	public double ptCostPerTrip_3Transfers_KIDR;
 	
 	public double carodtPickUpFee_KIDR;
-	public double carodtCostPerMin_KIDR;
+	//public double carodtCostPerMin_KIDR;
 	public double carodtCostPerkm_KIDR;
 	
 	
