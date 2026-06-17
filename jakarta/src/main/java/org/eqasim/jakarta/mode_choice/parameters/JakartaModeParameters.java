@@ -178,7 +178,7 @@ public class JakartaModeParameters extends ModeParameters {
 		//parameters.jMcodt.betaWaitingTime_u_min = 0.0 ;
 		//parameters.jMcodt.betaAccessEgressWalkTime_min = 0.0;
 		parameters.jMcodt.alpha_u = -1.15;
-		parameters.jMcodt.alpha_sex = -0.42;
+		parameters.jMcodt.alpha_sex = 0.83;
 		parameters.jMcodt.alpha_age = -1.32/100;
 		
 		
