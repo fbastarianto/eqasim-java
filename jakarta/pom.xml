@@ -24,7 +24,8 @@
 	                            2.0.0: Initial FLM
 	                            2.1.0: FLM + NoMcEgressExceptHome (tripConstraints) + teleportedModes + addingCostToFeeders
 	                            2.2.0: noTeleported
-	                            2.3.0: two guards in the PtUtilityEstimator -->
+	                            2.3.0: two guards in the PtUtilityEstimator
+	                            0.2.0: Baseline without FLM (0.1.0), updating the estimator based on MNL work -->
 
 	<repositories>
 		<repository>
