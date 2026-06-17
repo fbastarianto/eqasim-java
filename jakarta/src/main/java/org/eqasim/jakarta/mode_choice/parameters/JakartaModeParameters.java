@@ -4,7 +4,8 @@ import org.eqasim.core.simulation.mode_choice.parameters.ModeParameters;
 
 public class JakartaModeParameters extends ModeParameters {
 	public class JakartaWalkParameters {
-		public double alpha_age = 0.0;
+		//public double alpha_age = 0.0;
+		public double betaTravelDistance_km = 0.0; // new parameter
 	}
 	
 	public class JakartaCarParameters {
