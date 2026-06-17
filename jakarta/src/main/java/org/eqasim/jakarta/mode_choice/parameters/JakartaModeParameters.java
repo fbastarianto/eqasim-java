@@ -180,6 +180,7 @@ public class JakartaModeParameters extends ModeParameters {
 		parameters.jMcodt.alpha_u = -1.15;
 		parameters.jMcodt.alpha_sex = 0.83;
 		parameters.jMcodt.alpha_age = -1.32/100;
+		parameters.jMcodt.betaShortDistance_km = -0.03; // this parameter is not statistically significant, yml set to 0.0
 		
 		
 		//Motorcycle
