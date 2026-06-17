@@ -142,7 +142,7 @@ public class JakartaModeParameters extends ModeParameters {
 		parameters.pt.betaAccessEgressTime_u_min = -1.49/100;
 		parameters.jPT.alpha_fulltime = 0.808; // new parameter
 		//parameters.jPT.alpha_pt_city = 0.0;
-		//parameters.jPT.alpha_age = 0.0;
+		parameters.jPT.alpha_age = -0.031;
 		
 		// Bike
 		parameters.bike.alpha_u = -4.44;
