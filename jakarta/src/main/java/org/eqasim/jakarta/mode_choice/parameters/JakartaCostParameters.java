@@ -19,7 +19,7 @@ public class JakartaCostParameters implements ParameterDefinition {
 	
 	
 	public double mcodtPickUpFee_KIDR;
-	public double mcodtCostPerMin_KIDR;
+	//public double mcodtCostPerMin_KIDR;
 	public double mcodtCostPerkm_KIDR;
 	
 	//public double taxiPickUpFee_BRL;
