@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.eqasim.core.simulation.mode_choice.utilities.estimators.EstimatorUtils;
 import org.eqasim.core.simulation.mode_choice.utilities.estimators.PtUtilityEstimator;
-import org.eqasim.core.simulation.mode_choice.utilities.predictors.PersonPredictor;
+//import org.eqasim.core.simulation.mode_choice.utilities.predictors.PersonPredictor; // I pass PersonPredictor personPredictor
+// into the constructor, but never use it. Since super(...) only needs ptPredictor, I can remove this parameter
+// from the constructor if no dependency injection binding expects it.
 import org.eqasim.core.simulation.mode_choice.utilities.predictors.PtPredictor;         // core (for super)
 import org.eqasim.core.simulation.mode_choice.utilities.variables.PtVariables;
 import org.eqasim.jakarta.mode_choice.parameters.JakartaModeParameters;
@@ -28,7 +30,7 @@ public class JakartaPTUtilityEstimator extends PtUtilityEstimator {
 	@Inject
 	public JakartaPTUtilityEstimator(
 			JakartaModeParameters parameters,
-			PersonPredictor personPredictor,
+			//PersonPredictor personPredictor,
 			PtPredictor ptPredictor,              // core pt predictor passed to super
 			JakartaPersonPredictor predictor) {
 
@@ -40,9 +42,9 @@ public class JakartaPTUtilityEstimator extends PtUtilityEstimator {
 	}
 
 	// (Age utility; keep it if we need it)
-	protected double estimateAgeUtility(Person person) {
-		return (int) person.getAttributes().getAttribute("age") <= 16 ? parameters.jPT.alpha_age : 0.0;
-	}
+	//protected double estimateAgeUtility(Person person) { //no usage
+	//	return (int) person.getAttributes().getAttribute("age") <= 16 ? parameters.jPT.alpha_age : 0.0;
+	//}
 
 	@Override
 	public double estimateUtility(Person person, DiscreteModeChoiceTrip trip, List<? extends PlanElement> elements) {
@@ -51,9 +53,13 @@ public class JakartaPTUtilityEstimator extends PtUtilityEstimator {
 
 		double utility = 0.0;
 
+		// PT ASC
 		utility += estimateConstantUtility();
+		// Access + egress time
 		utility += estimateAccessEgressTimeUtility(variables_pt);
+		// Main PT in-vehicle time
 		utility += estimateInVehicleTimeUtility(variables_pt);
+
 		utility += estimateWaitingTimeUtility(variables_pt);
 		utility += estimateLineSwitchUtility(variables_pt);
 //		utility += estimateRegionalUtility(variables);

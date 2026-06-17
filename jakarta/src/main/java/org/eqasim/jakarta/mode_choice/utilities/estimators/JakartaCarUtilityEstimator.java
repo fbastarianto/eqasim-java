@@ -43,8 +43,12 @@ public class JakartaCarUtilityEstimator extends CarUtilityEstimator {
 
 		double utility = 0.0;
 
+		// asc_car
 		utility += estimateConstantUtility();
+
+		// b_tt_non_pt * tt_car_single_mi
 		utility += estimateTravelTimeUtility(variables_car);
+
 		//utility += estimateRegionalUtility(variables);
 		// utility += estimateAccessEgressTimeUtility(variables_car); // removed for consistency with estimated DCM/R utility. // adds a penalty for that extra access/egress time, using a coefficient: parameters.car.additionalAccessEgressWalkTime_min
 

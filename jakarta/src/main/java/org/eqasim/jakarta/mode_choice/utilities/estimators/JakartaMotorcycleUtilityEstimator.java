@@ -48,8 +48,9 @@ public class JakartaMotorcycleUtilityEstimator implements UtilityEstimator {
 	//			parameters.lambdaCostEuclideanDistance) * variables.cost_MU;
 
 	protected double estimateMonetaryCostUtility(MotorcycleVariables variables) {
-		return parameters.betaCost_u_MU * EstimatorUtils.interaction(variables.euclideanDistance_km,
-				parameters.referenceEuclideanDistance_km, parameters.lambdaCostEuclideanDistance) * variables.cost_MU;
+		return parameters.betaCost_u_MU * variables.cost_MU;
+
+	// Distance effect captured separately
 	}
 
 	@Override
@@ -61,7 +62,10 @@ public class JakartaMotorcycleUtilityEstimator implements UtilityEstimator {
 		
 		double utility = 0.0;
 
+		// asc_mc
 		utility += estimateConstantUtility();
+
+		// b_tt_non_pt * tt_mc_single_min
 		utility += estimateTravelTimeUtility(variables_mc);
 
 		//utility += estimateAccessEgressTimeUtility(variables_mc); // removed to consistent with DCM functions

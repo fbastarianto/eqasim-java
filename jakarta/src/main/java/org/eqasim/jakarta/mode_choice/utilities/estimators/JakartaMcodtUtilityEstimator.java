@@ -39,7 +39,10 @@ public class JakartaMcodtUtilityEstimator implements UtilityEstimator {
 
 		double utility = 0.0;
 
+		// asc_odt_mc
 		utility += estimateConstantUtility();
+
+		// b_tt_non_pt * tt_mc_single_min
 		utility += estimateTravelTimeUtility(variables_mcodt);
 
 		// utility += estimateAccessEgressTimeUtility(variables_mcodt); // not used in R utility
