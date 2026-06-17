@@ -86,6 +86,13 @@
 			<!-- <version>${parent.version}</version> -->
 		<!-- </dependency> -->
 
+		<!-- javax.inject -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
+
 		<!-- Guice -->
 		<dependency>
 			<groupId>com.google.inject</groupId>
