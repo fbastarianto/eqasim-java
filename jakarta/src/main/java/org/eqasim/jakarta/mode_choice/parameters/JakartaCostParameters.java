@@ -5,8 +5,8 @@ import org.eqasim.core.simulation.mode_choice.ParameterDefinition;
 public class JakartaCostParameters implements ParameterDefinition {
 	
 	public double carCost_KIDR_km;
-	public double carCharging_KIDR_km;
-	public double mcCharging_KIDR_km;
+	//public double carCharging_KIDR_km;
+	//public double mcCharging_KIDR_km;
 	
 	public double motorcycleCost_KIDR_km;
 	
