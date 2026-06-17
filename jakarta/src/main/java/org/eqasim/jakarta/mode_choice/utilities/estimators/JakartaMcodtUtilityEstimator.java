@@ -39,18 +39,38 @@ public class JakartaMcodtUtilityEstimator implements UtilityEstimator {
 
 		double utility = 0.0;
 
+		// asc_odt_mc
 		utility += estimateConstantUtility();
+
+		// b_tt_non_pt * tt_mc_single_min
 		utility += estimateTravelTimeUtility(variables_mcodt);
-		utility += estimateAccessEgressTimeUtility(variables_mcodt);
-		utility += parameters.jMcodt.alpha_age * variables.age ;
-		if (variables.sex == "f")
-			utility += 0.0;
-		else
-			utility += parameters.jMcodt.alpha_sex	;
+
+		// utility += estimateAccessEgressTimeUtility(variables_mcodt); // not used in R utility
+
+		// b_age_taxi_rh * AGE
+		utility += parameters.jMcodt.alpha_age * variables.age;
+
+		// b_female_rh * (SEX == 2)
+		if ("f".equals(variables.sex))
+			utility += parameters.jMcodt.alpha_sex; // females receive the coefficient and males receive zero
+
+		//if (variables.sex == "f")
+		//	utility += 0.0;
+		//else
+		//	utility += parameters.jMcodt.alpha_sex	;
 		//if (variables.hhlIncome == 0.0)
 		//	utility += estimateMonetaryCostUtility(variables_mcodt)
-		utility += estimateMonetaryCostUtility(variables_mcodt) * EstimatorUtils.interaction(variables.hhlIncome, 
-				parameters.jAvgHHLIncome.avg_hhl_income, parameters.jIncomeElasticity.lambda_income);
+
+		// b_tc_value * tc_mc_odt_single
+		utility += estimateMonetaryCostUtility(variables_mcodt) * EstimatorUtils.interaction(
+				variables.hhlIncome,
+				parameters.jAvgHHLIncome.avg_hhl_income,
+				parameters.jIncomeElasticity.lambda_income);
+
+		// b_short_dist_mode * (td_mc_single / 1000)
+		utility += parameters.jMcodt.betaShortDistance_km
+				* variables_mcodt.euclideanDistance_km;
+
 		//	* (parameters.jAvgHHLIncome.avg_hhl_income / 1.0);
 		//else
 		//	utility += estimateMonetaryCostUtility(variables_mcodt)

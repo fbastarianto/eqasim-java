@@ -5,8 +5,8 @@ import org.eqasim.core.simulation.mode_choice.ParameterDefinition;
 public class JakartaCostParameters implements ParameterDefinition {
 	
 	public double carCost_KIDR_km;
-	public double carCharging_KIDR_km;
-	public double mcCharging_KIDR_km;
+	//public double carCharging_KIDR_km;
+	//public double mcCharging_KIDR_km;
 	
 	public double motorcycleCost_KIDR_km;
 	
@@ -14,12 +14,12 @@ public class JakartaCostParameters implements ParameterDefinition {
 	public double ptCostPerTrip_3Transfers_KIDR;
 	
 	public double carodtPickUpFee_KIDR;
-	public double carodtCostPerMin_KIDR;
+	//public double carodtCostPerMin_KIDR;
 	public double carodtCostPerkm_KIDR;
 	
 	
 	public double mcodtPickUpFee_KIDR;
-	public double mcodtCostPerMin_KIDR;
+	//public double mcodtCostPerMin_KIDR;
 	public double mcodtCostPerkm_KIDR;
 	
 	//public double taxiPickUpFee_BRL;
@@ -36,10 +36,8 @@ public class JakartaCostParameters implements ParameterDefinition {
 		JakartaCostParameters parameters = new JakartaCostParameters();
 
 		parameters.carCost_KIDR_km = 2.95; // 2950 IDR/km
-		parameters.carCharging_KIDR_km = 5.0;
-		parameters.mcCharging_KIDR_km = 2.5;
-		
-		
+		//parameters.carCharging_KIDR_km = 5.0;
+		//parameters.mcCharging_KIDR_km = 2.5;
 		parameters.motorcycleCost_KIDR_km = 0.59; // 590 IDR/km
 		
 	
@@ -61,6 +59,8 @@ public class JakartaCostParameters implements ParameterDefinition {
 		//parameters.mcodtCostPerMin_KIDR = 0.38;//0.48;
 		parameters.mcodtCostPerkm_KIDR = 2.5;//2.4;
 		parameters.mcodtMinCost_KIDR = 6.0;//2.4;
+
+
 
 
 

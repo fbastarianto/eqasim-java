@@ -37,16 +37,23 @@ public class JakartaWalkUtilityEstimator extends WalkUtilityEstimator {
 
 	@Override
 	public double estimateUtility(Person person, DiscreteModeChoiceTrip trip, List<? extends PlanElement> elements) {
-		JakartaPersonVariables variables = predictor.predictVariables(person, trip, elements);
+		//JakartaPersonVariables variables = predictor.predictVariables(person, trip, elements); // It is now unused unless I want to keep age/regional terms
 
 		double utility = 0.0;
 		double distance = CoordUtils.calcEuclideanDistance(trip.getOriginActivity().getCoord(),
 				trip.getDestinationActivity().getCoord());
-		if (distance > 2 * 900) //750
+
+		// Optional availability-style penalty for unrealistic walk distances
+		if (distance > 3747) // maximum observed walking distance for a single trip is 3.747km
 			utility += -1500;
+
+		// asc_walk + b_tt_non_pt * tt_walk_single_min >> check org.eqasim.core.simulation.mode_choice.utilities.estimators.WalkUtilityEstimator
 		utility += super.estimateUtility(person, trip, elements);
-		utility += parameters.jWalk.alpha_age * variables.age;
-//		utility += estimateRegionalUtility(variables);
+
+		// b_td_walk * (td_walk / 1000)
+		utility += parameters.jWalk.betaTravelDistance_km * (distance / 1000.0);
+		//utility += parameters.jWalk.alpha_age * variables.age;
+		//utility += estimateRegionalUtility(variables);
 
 		return utility;
 	}

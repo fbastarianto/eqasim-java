@@ -43,12 +43,26 @@ public class JakartaCarUtilityEstimator extends CarUtilityEstimator {
 
 		double utility = 0.0;
 
+		// asc_car
 		utility += estimateConstantUtility();
+
+		// b_tt_non_pt * tt_car_single_mi
 		utility += estimateTravelTimeUtility(variables_car);
+
 		//utility += estimateRegionalUtility(variables);
-		utility += estimateAccessEgressTimeUtility(variables_car);
-		utility += estimateMonetaryCostUtility(variables_car) * EstimatorUtils.interaction(variables.hhlIncome, 
-				parameters.jAvgHHLIncome.avg_hhl_income, parameters.jIncomeElasticity.lambda_income);
+		// utility += estimateAccessEgressTimeUtility(variables_car); // removed for consistency with estimated DCM/R utility. // adds a penalty for that extra access/egress time, using a coefficient: parameters.car.additionalAccessEgressWalkTime_min
+
+		// b_tc_value * tc_car_single, with income elasticity
+		utility += estimateMonetaryCostUtility(variables_car) * EstimatorUtils.interaction(
+				variables.hhlIncome,
+				parameters.jAvgHHLIncome.avg_hhl_income,
+				parameters.jIncomeElasticity.lambda_income);
+
+		// b_td_car * (td_car_single / 1000)
+		utility += parameters.jCar.betaTravelDistance_km * variables_car.euclideanDistance_km;
+
+		// b_age_car * AGE
+		utility += parameters.jCar.alpha_age * variables.age;
 		
 		//if (variables.hhlIncome == 0.0)
 		//	utility += estimateMonetaryCostUtility(variables_car)

@@ -41,17 +41,35 @@ public class JakartaCarodtUtilityEstimator implements UtilityEstimator {
 
 		double utility = 0.0;
 
+		// asc_odt_car
 		utility += estimateConstantUtility();
+
+		// b_tt_non_pt * tt_car_single_min
 		utility += estimateTravelTimeUtility(variables_Carodt);
-		utility += estimateAccessEgressTimeUtility(variables_Carodt);
+
+		//utility += estimateAccessEgressTimeUtility(variables_Carodt); // not included in the R function
+
+		// b_age_taxi_rh * AGE
 		utility += parameters.jCarodt.alpha_age * variables.age;
-		if (variables.sex == "f")
-			utility += 0.0;
-		else
-			utility += parameters.jCarodt.alpha_sex	;
+
+		// b_female_rh * (SEX == 2)
+		if ("f".equals(variables.sex))
+			utility += parameters.jCarodt.alpha_sex;
+		//if (variables.sex == "f")
+		//	utility += 0.0;
+		//else
+		//	utility += parameters.jCarodt.alpha_sex	;
 		//if (variables.hhlIncome == 0.0)
-		utility += estimateMonetaryCostUtility(variables_Carodt) * EstimatorUtils.interaction(variables.hhlIncome, 
-				parameters.jAvgHHLIncome.avg_hhl_income, parameters.jIncomeElasticity.lambda_income);
+
+		// b_tc_value * tc_car_odt_single
+		utility += estimateMonetaryCostUtility(variables_Carodt) * EstimatorUtils.interaction(
+				variables.hhlIncome,
+				parameters.jAvgHHLIncome.avg_hhl_income,
+				parameters.jIncomeElasticity.lambda_income);
+
+		// b_jakartans_rh * (home_jakarta == 1)
+		// Ignored unless home_jakarta exists in JakartaPersonVariables
+
 		//	* (parameters.jAvgHHLIncome.avg_hhl_income / 1.0);
 		//else
 		//	utility += estimateMonetaryCostUtility(variables_Carodt)
@@ -67,9 +85,13 @@ public class JakartaCarodtUtilityEstimator implements UtilityEstimator {
 
 
 	protected double estimateMonetaryCostUtility(CarodtVariables variables_Carodt) {
-		return parameters.betaCost_u_MU * EstimatorUtils.interaction(variables_Carodt.euclideanDistance_km, 
-				parameters.referenceEuclideanDistance_km, parameters.lambdaCostEuclideanDistance)  * variables_Carodt.cost_MU;
+		return parameters.betaCost_u_MU * variables_Carodt.cost_MU;
 	}
+
+	//protected double estimateMonetaryCostUtility(CarodtVariables variables_Carodt) {
+	//	return parameters.betaCost_u_MU * EstimatorUtils.interaction(variables_Carodt.euclideanDistance_km,
+	//			parameters.referenceEuclideanDistance_km, parameters.lambdaCostEuclideanDistance)  * variables_Carodt.cost_MU;
+	//}
 
 	
 	protected double estimateAccessEgressTimeUtility(CarodtVariables variables_Carodt) {

@@ -41,9 +41,16 @@ public class JakartaMotorcycleUtilityEstimator implements UtilityEstimator {
 		return parameters.walk.betaTravelTime_u_min * variables.accessEgressTime_min;
 	}
 
+	//protected double estimateMonetaryCostUtility(MotorcycleVariables variables) { // REMOVED >> Cost sensitivity varies by DISTANCE
+	//	return parameters.betaCost_u_MU * EstimatorUtils.interaction(
+	//			variables.euclideanDistance_km,
+	//			parameters.referenceEuclideanDistance_km,
+	//			parameters.lambdaCostEuclideanDistance) * variables.cost_MU;
+
 	protected double estimateMonetaryCostUtility(MotorcycleVariables variables) {
-		return parameters.betaCost_u_MU * EstimatorUtils.interaction(variables.euclideanDistance_km,
-				parameters.referenceEuclideanDistance_km, parameters.lambdaCostEuclideanDistance) * variables.cost_MU;
+		return parameters.betaCost_u_MU * variables.cost_MU;
+
+	// Distance effect captured separately
 	}
 
 	@Override
@@ -55,12 +62,24 @@ public class JakartaMotorcycleUtilityEstimator implements UtilityEstimator {
 		
 		double utility = 0.0;
 
+		// asc_mc
 		utility += estimateConstantUtility();
+
+		// b_tt_non_pt * tt_mc_single_min
 		utility += estimateTravelTimeUtility(variables_mc);
-		utility += estimateAccessEgressTimeUtility(variables_mc);
-		utility += parameters.jMotorcycle.alpha_age * variables.age;
-		utility += estimateMonetaryCostUtility(variables_mc) * EstimatorUtils.interaction(variables.hhlIncome, 
-				parameters.jAvgHHLIncome.avg_hhl_income, parameters.jIncomeElasticity.lambda_income);
+
+		//utility += estimateAccessEgressTimeUtility(variables_mc); // removed to consistent with DCM functions
+		//utility += parameters.jMotorcycle.alpha_age * variables.age; // removed to consistent with DCM functions
+
+		// b_tc_value * tc_mc_single
+		utility += estimateMonetaryCostUtility(variables_mc) * EstimatorUtils.interaction(
+				variables.hhlIncome,
+				parameters.jAvgHHLIncome.avg_hhl_income,
+				parameters.jIncomeElasticity.lambda_income);
+
+		// b_short_dist_mode * (td_mc_single / 1000)
+		utility += parameters.jMotorcycle.betaShortDistance_km * variables_mc.euclideanDistance_km;
+
 		//if (variables.hhlIncome == 0.0)
 		//	utility += estimateMonetaryCostUtility(variables)
 		//	* (parameters.jAvgHHLIncome.avg_hhl_income / 1.0);
