@@ -193,7 +193,7 @@ public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
         return new PtVariables(
                 v.inVehicleTime_min,
                 v.waitingTime_min,
-                v.accessEgressTime_min, //+ extraAccessEgress_min,
+                v.accessEgressTime_min, + extraAccessEgress_min,
                 v.numberOfLineSwitches,
                 v.cost_MU + odtCostMU - discountMU,
                 v.euclideanDistance_km
