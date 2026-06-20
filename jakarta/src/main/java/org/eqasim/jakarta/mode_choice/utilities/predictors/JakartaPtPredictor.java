@@ -195,7 +195,7 @@ public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
                 v.waitingTime_min,
                 v.accessEgressTime_min, //+ extraAccessEgress_min,
                 v.numberOfLineSwitches,
-                v.cost_MU - discountMU,
+                v.cost_MU + odtCostMU - discountMU,
                 v.euclideanDistance_km
         );
     }
