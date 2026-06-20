@@ -127,8 +127,8 @@ public class JakartaPTUtilityEstimator extends PtUtilityEstimator {
 		// Main PT in-vehicle time
 		utility += estimateInVehicleTimeUtility(variables_pt);
 
-		utility += estimateWaitingTimeUtility(variables_pt);
-		utility += estimateLineSwitchUtility(variables_pt);
+		//utility += estimateWaitingTimeUtility(variables_pt); // remove waiting and line-switch utility from JakartaPTUtilityEstimator.java for consistency with the R utility.
+		//utility += estimateLineSwitchUtility(variables_pt);  // remove waiting and line-switch utility from JakartaPTUtilityEstimator.java for consistency with the R utility.
 //		utility += estimateRegionalUtility(variables);
 
 		// b_age_pt * AGE
