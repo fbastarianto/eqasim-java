@@ -123,7 +123,7 @@ public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
 
             // If you want feeder time to be added explicitly to PT access/egress time,
             // uncomment the following line:
-            // extraAccessEgress_min += tt_min;
+            extraAccessEgress_min += tt_min;
 
             // distance-based ODT fare for mcodt feeders
             if ("mcodt".equals(mode)) {
