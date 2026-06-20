@@ -29,7 +29,8 @@
 	                            2.4.0: fixing the JakartaPtPredictor.java to correctly detect feeder and then reduce generalised pt cost by giving PT subsidy when using mcODT paired with public transit
 	                            Revised version
 	                            0.2.0: Baseline without FLM (0.1.0), updating the estimator based on MNL work
-	                            2.5.0: Update 2.4.0 with 0.2.0 baseline Utility estimators (based on revised MNL works) -->
+	                            2.5.0: Update 2.4.0 with 0.2.0 baseline Utility estimators (based on revised MNL works)
+	                            2.6.0: Update 2.5.0 by removing waiting and line-switch utility from JakartaPTUtilityEstimator.java for consistency with the R utility. -->
 
 	<repositories>
 		<repository>
