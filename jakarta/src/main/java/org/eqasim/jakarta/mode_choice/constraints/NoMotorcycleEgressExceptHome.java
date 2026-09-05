@@ -98,10 +98,25 @@ public class NoMotorcycleEgressExceptHome implements TripConstraint {
         }
         // If there is no PT leg, nothing to constrain here
         if (firstPtIdx == -1) {
-            throw new IllegalStateException(
-                    "NoMotorcycleEgressExceptHome: PT candidate contains no actual PT leg; candidate class="
+            StringBuilder modes = new StringBuilder();
+
+            for (PlanElement pe : elements) {
+                if (pe instanceof Leg) {
+                    if (modes.length() > 0) {
+                        modes.append("-");
+                    }
+                    modes.append(((Leg) pe).getMode());
+                }
+            }
+
+            log.warn(
+                    "NoMotorcycleEgressExceptHome: PT-labelled candidate contains no actual PT leg; "
+                            + "constraint not applicable. candidateClass="
                             + candidate.getClass().getName()
+                            + " legModes=" + modes
             );
+
+            return true;
         }
 
         // Check whether private motorcycle appears ANYWHERE on the PT access side
