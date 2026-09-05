@@ -10,6 +10,7 @@ import org.eqasim.jakarta.mode_choice.parameters.JakartaModeParameters;
 import org.eqasim.jakarta.mode_choice.utilities.predictors.JakartaPersonPredictor;      // custom
 import org.eqasim.jakarta.mode_choice.utilities.predictors.JakartaPtPredictor;          // custom
 import org.eqasim.jakarta.mode_choice.utilities.variables.JakartaPersonVariables;
+import org.eqasim.jakarta.routing.HomeSideTripAttributes;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
@@ -19,12 +20,13 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 import com.google.inject.Inject;
 
 /**
- * Jakarta PT utility estimator with feeder-mode restrictions:
+ * Jakarta PT utility estimator with defensive feeder-mode checks:
  * - Motorcycle access is allowed only if the trip's ORIGIN is "home".
  * - Motorcycle egress is allowed only if the trip's DESTINATION is "home".
  *
- * (We enforce this here because feeder legs are produced by SRR and are not
- *  governed by the tour constraints on main modes.)
+ * The authoritative restriction is applied before route choice by
+ * {@code JakartaHomeSideRaptorStopFinder}; these adjacency checks are retained
+ * to avoid changing the calibrated utility-estimation path unexpectedly.
  */
 
 public class JakartaPTUtilityEstimator extends PtUtilityEstimator {
@@ -48,17 +50,11 @@ public class JakartaPTUtilityEstimator extends PtUtilityEstimator {
 		System.out.println("PtPredictor bound to: " + ptPredictor.getClass().getName());
 	}
 
-	// ------- Helper: activity type "home" matcher (robust to variants like "home", "home_1", etc.)
-	private static boolean isHomeType(String type) {
-		if (type == null) return false;
-		String t = type.toLowerCase();
-		return t.equals("home") || t.startsWith("home");
-	}
-
-	// ------- Guard: forbid motorcycle ACCESS unless ORIGIN is "home"
+	// Defensive DMC check only. The authoritative restriction is at the
+	// RaptorStopFinder boundary so startup/general routing is covered as well.
 	private static boolean hasIllegalMotorcycleAccess(DiscreteModeChoiceTrip trip,
-	                                                  List<? extends PlanElement> elements) {
-		boolean originIsHome = isHomeType(trip.getOriginActivity().getType());
+			List<? extends PlanElement> elements) {
+		boolean originIsHome = HomeSideTripAttributes.isHome(trip.getOriginActivity().getType());
 
 		for (int i = 0; i < elements.size(); i++) {
 			PlanElement pe = elements.get(i);
@@ -80,8 +76,8 @@ public class JakartaPTUtilityEstimator extends PtUtilityEstimator {
 
 	// ------- Guard: forbid motorcycle EGRESS unless DESTINATION is "home"
 	private static boolean hasIllegalMotorcycleEgress(DiscreteModeChoiceTrip trip,
-	                                                  List<? extends PlanElement> elements) {
-		boolean destIsHome = isHomeType(trip.getDestinationActivity().getType());
+			List<? extends PlanElement> elements) {
+		boolean destIsHome = HomeSideTripAttributes.isHome(trip.getDestinationActivity().getType());
 
 		for (int i = 0; i < elements.size(); i++) {
 			PlanElement pe = elements.get(i);
