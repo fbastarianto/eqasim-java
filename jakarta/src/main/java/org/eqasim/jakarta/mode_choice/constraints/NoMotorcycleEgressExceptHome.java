@@ -32,10 +32,24 @@ import org.matsim.contribs.discrete_mode_choice.model.trip_based.candidates.Rout
  * Disallowed:
  * ... --(pt)--> stop --(motorcycle egress)--> non-home
  *
+ * non-home
+ *   -> motorcycle
+ *   -> walk
+ *   -> pt
+ *   -> ...
+ *
+ * ...
+ *   -> pt
+ *   -> walk
+ *   -> motorcycle
+ *   -> non-home
+ *
  * In other words:
  * - motorcycle can be used as access to PT (e.g., home → stop),
  * - motorcycle can only be used as egress if the destination is home (stop → home),
  * - otherwise, the alternative is rejected.
+ * - the current implementation prevents an intervening walk leg from hiding
+ *   motorcycle use from this constraint.
  *
  * @author faza
  */
@@ -64,8 +78,10 @@ public class NoMotorcycleEgressExceptHome implements TripConstraint {
         // Extract routed plan elements from the concrete candidate type
         List<? extends PlanElement> elements = extractElements(candidate);
         if (elements.isEmpty()) {
-            log.info("NoMotorcycleEgressExceptHome: no elements for candidate class=" + candidate.getClass().getName());
-            return true;
+            throw new IllegalStateException(
+                    "NoMotorcycleEgressExceptHome: cannot inspect routed elements for PT candidate class="
+                            + candidate.getClass().getName()
+            );
         } // add logging and make extractElements more robust
 
         // Find first and last indices of PT legs in the elements list
@@ -82,58 +98,87 @@ public class NoMotorcycleEgressExceptHome implements TripConstraint {
         }
         // If there is no PT leg, nothing to constrain here
         if (firstPtIdx == -1) {
-            log.info("NoMotorcycleEgressExceptHome: no PT leg found in elements for candidate class=" + candidate.getClass().getName());
-            return true;
+            throw new IllegalStateException(
+                    "NoMotorcycleEgressExceptHome: PT candidate contains no actual PT leg; candidate class="
+                            + candidate.getClass().getName()
+            );
         }
 
-        // Access leg: the leg immediately before the first PT leg (if any)
-        Leg accessLeg = null;
-        for (int i = firstPtIdx - 1; i >= 0; i--) {
-            if (elements.get(i) instanceof Leg) { accessLeg = (Leg) elements.get(i); break; }
+        // Check whether private motorcycle appears ANYWHERE on the PT access side
+// (i.e. anywhere before the first actual PT leg).
+        boolean motorcycleOnAccessSide = false;
+
+        for (int i = 0; i < firstPtIdx; i++) {
+            PlanElement pe = elements.get(i);
+
+            if (pe instanceof Leg) {
+                Leg leg = (Leg) pe;
+
+                if ("motorcycle".equalsIgnoreCase(leg.getMode())) {
+                    motorcycleOnAccessSide = true;
+                    break;
+                }
+            }
         }
 
-        // Egress leg: the leg immediately after the last PT leg (if any)
-        Leg egressLeg = null;
+// Check whether private motorcycle appears ANYWHERE on the PT egress side
+// (i.e. anywhere after the last actual PT leg).
+        boolean motorcycleOnEgressSide = false;
+
         for (int i = lastPtIdx + 1; i < elements.size(); i++) {
-            if (elements.get(i) instanceof Leg) { egressLeg = (Leg) elements.get(i); break; }
+            PlanElement pe = elements.get(i);
+
+            if (pe instanceof Leg) {
+                Leg leg = (Leg) pe;
+
+                if ("motorcycle".equalsIgnoreCase(leg.getMode())) {
+                    motorcycleOnEgressSide = true;
+                    break;
+                }
+            }
         }
 
-        String originType = trip.getOriginActivity() != null ? trip.getOriginActivity().getType() : null;
-        String destType   = trip.getDestinationActivity() != null ? trip.getDestinationActivity().getType() : null;
+        String originType =
+                trip.getOriginActivity() != null
+                        ? trip.getOriginActivity().getType()
+                        : null;
 
-        // Diagnostic print -> logger
-        log.info(String.format(
-                "NoMotorcycleEgressExceptHome: candidateClass=%s elems=%d firstPt=%d lastPt=%d access=%s egress=%s origin=%s dest=%s",
+        String destType =
+                trip.getDestinationActivity() != null
+                        ? trip.getDestinationActivity().getType()
+                        : null;
+
+        boolean originIsHome =
+                originType != null
+                        && "home".equalsIgnoreCase(originType);
+
+        boolean destinationIsHome =
+                destType != null
+                        && "home".equalsIgnoreCase(destType);
+
+// Diagnostic logger
+        log.debug(String.format(
+                "NoMotorcycleEgressExceptHome: candidateClass=%s elems=%d firstPt=%d lastPt=%d "
+                        + "motorcycleOnAccessSide=%s motorcycleOnEgressSide=%s origin=%s dest=%s",
                 candidate.getClass().getName(),
                 elements.size(),
                 firstPtIdx,
                 lastPtIdx,
-                accessLeg != null ? accessLeg.getMode() : "null",
-                egressLeg != null ? egressLeg.getMode() : "null",
-                originType, destType
+                motorcycleOnAccessSide,
+                motorcycleOnEgressSide,
+                originType,
+                destType
         ));
 
-        // Diagnostic print
-        System.out.println(String.format(
-                "NoMotorcycleEgressExceptHome: candidateClass=%s elems=%d firstPt=%d lastPt=%d access=%s egress=%s origin=%s dest=%s",
-                candidate.getClass().getName(),
-                elements.size(),
-                firstPtIdx,
-                lastPtIdx,
-                accessLeg != null ? accessLeg.getMode() : "null",
-                egressLeg != null ? egressLeg.getMode() : "null",
-                originType, destType
-        ));
-
-        // Motorcycle as access is only allowed if origin is home
-        if (accessLeg != null && "motorcycle".equalsIgnoreCase(accessLeg.getMode())
-                && (originType == null || !"home".equalsIgnoreCase(originType))) {
+// Private motorcycle anywhere on the PT access side
+// is only allowed if the substantive trip origin is home.
+        if (motorcycleOnAccessSide && !originIsHome) {
             return false;
         }
 
-        // Motorcycle as egress is only allowed if destination is home
-        if (egressLeg != null && "motorcycle".equalsIgnoreCase(egressLeg.getMode())
-                && (destType == null || !"home".equalsIgnoreCase(destType))) {
+// Private motorcycle anywhere on the PT egress side
+// is only allowed if the substantive trip destination is home.
+        if (motorcycleOnEgressSide && !destinationIsHome) {
             return false;
         }
 
