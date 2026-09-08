@@ -9,6 +9,7 @@ public class JakartaConfigurator extends EqasimConfigurator {
     public JakartaConfigurator(CommandLine cmd) {
         super (cmd);
 
+        registerConfigGroup(new org.eqasim.jakarta.mode_choice.JakartaBehaviourConfigGroup(), false);
         registerModule(new JakartaModeChoiceModule(cmd));
         // Must follow SwissRailRaptorModule (registered by EqasimConfigurator)
         // so its RaptorStopFinder binding is the effective overriding binding.

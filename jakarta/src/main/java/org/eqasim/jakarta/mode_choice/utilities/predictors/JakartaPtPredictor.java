@@ -6,7 +6,7 @@ import java.util.List;
 import org.eqasim.core.simulation.mode_choice.utilities.predictors.CachedVariablePredictor;
 import org.eqasim.core.simulation.mode_choice.utilities.predictors.PtPredictor;
 import org.eqasim.core.simulation.mode_choice.utilities.variables.PtVariables;
-import org.eqasim.jakarta.mode_choice.parameters.JakartaModeParameters;
+import org.eqasim.jakarta.mode_choice.parameters.JakartaFeederPolicyParameters;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
@@ -24,7 +24,7 @@ import com.google.inject.Inject;
  *    (walk / non_network_walk / motorcycle / mcodt) that connect to PT
  *    are treated consistently.
  *  - Add a monetary ODT fare component for mcodt feeders into v.cost_MU,
- *    controlled via jPT.odt.* parameters in JakartaModeParameters.
+ *    controlled via shared JakartaFeederPolicyParameters.
  *
  * How it works:
  *  - Use the delegate PtPredictor to compute baseline PtVariables.
@@ -42,12 +42,18 @@ import com.google.inject.Inject;
 
 public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
     private final PtPredictor delegate;
-    private final JakartaModeParameters params;
+    private final JakartaFeederPolicyParameters params;
 
     @Inject
-    public JakartaPtPredictor(PtPredictor delegate, TransitSchedule schedule, JakartaModeParameters params) {
+    public JakartaPtPredictor(PtPredictor delegate, TransitSchedule schedule, JakartaFeederPolicyParameters params) {
         this.delegate = delegate;
         this.params = params;
+    }
+
+    /** No shared trip-identity cache: candidate routes and persons may be interleaved. */
+    @Override
+    public PtVariables predictVariables(Person person, DiscreteModeChoiceTrip trip, List<? extends PlanElement> elements) {
+        return predict(person, trip, elements);
     }
 
     @Override
@@ -60,10 +66,7 @@ public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
             }
         }
 
-        // DEBUG: prove that JakartaPtPredictor is being used
-        System.out.println("PT PREDICTOR CALLED for person=" + person.getId());
-
-        PtVariables v = delegate.predictVariables(person, trip, ptOnly);
+        PtVariables v = delegate.predict(person, trip, ptOnly);
 
         // 2) From original elements: feeder mins + mcodt feeder distances
         double extraAccessEgress_min = 0.0;
@@ -140,14 +143,6 @@ public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
                     }
                 }
 
-                System.out.println(
-                        "DEBUG FEEDER MCODT | person=" + person.getId()
-                                + " | mode=" + mode
-                                + " | dist_m=" + dist_m
-                                + " | tt_s=" + tt_s_mcodt
-                                + " | touchesPt=" + touchesPt
-                );
-
                 if (touchesPt) {
                     mcodt_km += dist_m / 1000.0;
                     mcodtLegs++;
@@ -156,20 +151,17 @@ public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
 
         }
 
-        // DEBUG: prove that YAML has NO effect
-        System.out.println("DEBUG per_km_mcodt=" + params.jPT.odt.per_km_mcodt);
-
         // 3) ODT fares (MU) from parameters
         double odtCostMU =
-                params.jPT.odt.base_mcodt * mcodtLegs
-                        + params.jPT.odt.per_km_mcodt * mcodt_km; //params.jPT.odt.per_min_mcodt * mcodtMin
+                params.base_mcodt * mcodtLegs
+                        + params.per_km_mcodt * mcodt_km; //params.per_min_mcodt * mcodtMin
 
         // 3b) PT voucher: reduce normal PT cost by a share of the feeder cost
-        double subsidyShare = params.jPT.odt.subsidyShare_mcodt;   // e.g. 0.25 for 25%
+        double subsidyShare = params.subsidyShare_mcodt;   // e.g. 0.25 for 25%
         double discountMU = subsidyShare * odtCostMU;
 
         // Optional safety: avoid making cost wildly negative
-        double maxDiscountMU = params.jPT.odt.maxDiscountMU_mcodt; // or something calibrated in the yml file
+        double maxDiscountMU = params.maxDiscountMU_mcodt; // or something calibrated in the yml file
 
         // Apply cap
         if (discountMU > maxDiscountMU) {
@@ -178,16 +170,6 @@ public class JakartaPtPredictor extends CachedVariablePredictor<PtVariables> {
 
         // double newCostMU = v.cost_MU - discountMU;
 
-        // DEBUG: prove if mcodt_km and odtCostMU are non-zero
-        if (mcodt_km > 0) {
-            System.out.println(
-                    "DEBUG PT ODT COST | person=" + person.getId()
-                            + " | mcodt_km=" + mcodt_km
-                            + " | per_km_mcodt=" + params.jPT.odt.per_km_mcodt
-                            + " | odtCostMU=" + odtCostMU
-                            + " | baseCostPerLeg=" + params.jPT.odt.base_mcodt
-            );
-        }
 
         // 4) Return updated PtVariables
         return new PtVariables(

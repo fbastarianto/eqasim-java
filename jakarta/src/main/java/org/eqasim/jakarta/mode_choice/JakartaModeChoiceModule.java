@@ -18,7 +18,8 @@ import org.eqasim.jakarta.mode_choice.costs.JakartaMcodtCostModel;
 import org.eqasim.jakarta.mode_choice.costs.JakartaMotorcycleCostModel;
 import org.eqasim.jakarta.mode_choice.costs.JakartaPtCostModel;
 import org.eqasim.jakarta.mode_choice.parameters.JakartaCostParameters;
-import org.eqasim.jakarta.mode_choice.parameters.JakartaModeParameters;
+import org.eqasim.jakarta.mode_choice.parameters.*;
+import org.eqasim.jakarta.mode_choice.behaviour.JakartaBehaviour;
 import org.eqasim.jakarta.mode_choice.utilities.estimators.JakartaCarUtilityEstimator;
 import org.eqasim.jakarta.mode_choice.utilities.estimators.JakartaCarodtUtilityEstimator;
 import org.eqasim.jakarta.mode_choice.utilities.estimators.JakartaMcodtUtilityEstimator;
@@ -82,6 +83,7 @@ public class JakartaModeChoiceModule extends AbstractEqasimExtension {
 		bind(org.eqasim.jakarta.mode_choice.utilities.predictors.JakartaPtPredictor.class)
 				.in(Scopes.SINGLETON);
 
+		bind(JakartaBehaviour.class).in(Scopes.SINGLETON);
 		bind(JakartaPersonPredictor.class);
 		bind(JakartaCarodtPredictor.class);
 		bind(JakartaMcodtPredictor.class);
@@ -107,32 +109,28 @@ public class JakartaModeChoiceModule extends AbstractEqasimExtension {
 		bind(ModeParameters.class).to(JakartaModeParameters.class);
 	}
 
-	@Provides
-	@Singleton
-	public JakartaModeParameters provideModeChoiceParameters(EqasimConfigGroup config)
-			throws IOException, ConfigurationException {
-		JakartaModeParameters parameters = JakartaModeParameters.buildDefault();
-
-		if (config.getModeParametersPath() != null) {
-			ParameterDefinition.applyFile(new File(config.getModeParametersPath()), parameters);
-		}
-
-		ParameterDefinition.applyCommandLine("mode-parameter", commandLine, parameters);
-		return parameters;
-	}
-
-	@Provides
-	@Singleton
-	public JakartaCostParameters provideCostParameters(EqasimConfigGroup config) {
-		JakartaCostParameters parameters = JakartaCostParameters.buildDefault();
-
-		if (config.getCostParametersPath() != null) {
-			ParameterDefinition.applyFile(new File(config.getCostParametersPath()), parameters);
-		}
-
-		ParameterDefinition.applyCommandLine("cost-parameter", commandLine, parameters);
-		return parameters;
-	}	
+    @Provides @Singleton
+    public JakartaModeParameters provideModeChoiceParameters(Config config, EqasimConfigGroup eqasim) {
+        if (eqasim.getModeParametersPath() != null && !"null".equals(eqasim.getModeParametersPath()))
+            throw new IllegalArgumentException("3.0.0 requires jakartaBehaviour.commuterModeParametersPath and nonCommuterModeParametersPath; ambiguous eqasim.modeParametersPath is not supported");
+        return JakartaParameterLoader.load(JakartaModeParameters.buildDefault(),
+            JakartaBehaviourConfigGroup.get(config).getCommuterModeParametersPath(), "commuter-mode-parameter", commandLine);
+    }
+    @Provides @Singleton
+    public JakartaNonCommuterParameters provideNonCommuterParameters(Config config) {
+        return JakartaParameterLoader.load(new JakartaNonCommuterParameters(),
+            JakartaBehaviourConfigGroup.get(config).getNonCommuterModeParametersPath(), "non-commuter-mode-parameter", commandLine);
+    }
+    @Provides @Singleton
+    public JakartaFeederPolicyParameters provideFeederPolicyParameters(Config config) {
+        return JakartaParameterLoader.load(new JakartaFeederPolicyParameters(),
+            JakartaBehaviourConfigGroup.get(config).getFeederPolicyParametersPath(), "feeder-policy-parameter", commandLine);
+    }
+    @Provides @Singleton
+    public JakartaCostParameters provideCostParameters(EqasimConfigGroup config) {
+        return JakartaParameterLoader.load(JakartaCostParameters.buildDefault(), config.getCostParametersPath(),
+            "cost-parameter", commandLine);
+    }
 	@Provides
 	@Named("mcodt")
 	public CostModel provideMcodtCostModel(Map<String, Provider<CostModel>> factory, EqasimConfigGroup config) {

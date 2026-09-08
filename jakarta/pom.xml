@@ -16,7 +16,7 @@
 
 	<groupId>org.eqasim</groupId>
 	<artifactId>jakarta</artifactId>
-	<version>2.8.0</version>   <!-- this controls the JAR name.
+	<version>3.0.0</version>   <!-- this controls the JAR name.
 	                            Ver:
 	                            0.0.0: Baseline
 	                            0.1.0: Baseline with FLM (2.3.0 configuration)
@@ -32,7 +32,8 @@
 	                            2.5.0: Update 2.4.0 with 0.2.0 baseline Utility estimators (based on revised MNL works)
 	                            2.6.0: Update 2.5.0 by removing waiting and line-switch utility from JakartaPTUtilityEstimator.java for consistency with the R utility.
 	                            2.7.0: Changes in NoMotorcycleEgressExceptHome.java -> Strengthened the PT private-motorcycle home-side constraint to detect motorcycle use anywhere on the access/egress side of PT trips and reject infeasible non-home feeder use, with stricter validation of routed PT candidates.
-	                            2.8.0: Adds a routing-level PT private-motorcycle home-side feasibility restriction shared by startup/general and DMC PT routing.-->
+	                            2.8.0: Adds a routing-level PT private-motorcycle home-side feasibility restriction shared by startup/general and DMC PT routing.
+	                            3.0.0: Add commuter/non-commuter mode choice behaviour within the subpopulation settings.-->
 
 	<repositories>
 		<repository>

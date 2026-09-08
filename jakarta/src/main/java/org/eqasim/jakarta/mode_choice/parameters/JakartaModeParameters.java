@@ -20,19 +20,6 @@ public class JakartaModeParameters extends ModeParameters {
 		public double alpha_age = 0.0;
 		public double alpha_fulltime = 0.0; // new parameter
 
-		// NEW: ODT fare parameters for feeders
-		public static class ODT {
-			public double base_mcodt = 0.0;     // MU per mcodt feeder leg (flat)
-			public double per_km_mcodt = 0.0;  // MU per km on mcodt feeder
-			//public double base_carodt = 0.0;    // MU per carodt feeder leg (flat)
-			//public double per_min_carodt = 0.0; // MU per minute on carodt feeder
-
-			// NEW: share of mcodt feeder cost used as PT voucher (0.25 = 25% discount)
-			public double subsidyShare_mcodt = 0.0;
-			// NEW: cap on the voucher (MU). A default of ∞ means “no cap” (same as setting 9999 or 1e12 in YAML).
-			public double maxDiscountMU_mcodt = Double.POSITIVE_INFINITY;
-		}
-		public ODT odt = new ODT();
 
 	}
 	
@@ -66,7 +53,7 @@ public class JakartaModeParameters extends ModeParameters {
 		public double betaAccessEgressWalkTime_min = 0.0;
 		public double betaWaitingTime_u_min = 0.0;
 		public double alpha_u = 0.0;
-		public double alpha_sex = 0.0;
+		public double alpha_female = 0.0;
 		public double alpha_age = 0.0;
 		
 	//	public JakartaCarodtParameters() {
@@ -84,7 +71,7 @@ public class JakartaModeParameters extends ModeParameters {
 		public double betaAccessEgressWalkTime_min = 0.0;
 		public double betaWaitingTime_u_min = 0.0;
 		public double alpha_u = 0.0;
-		public double alpha_sex = 0.0;
+		public double alpha_female = 0.0;
 		public double betaShortDistance_km = 0.0;
 		
 	//	public JakartaMcodtParameters() //{
@@ -167,7 +154,7 @@ public class JakartaModeParameters extends ModeParameters {
 		//parameters.jCarodt.betaWaitingTime_u_min = 0.0 ;
 		//parameters.jCarodt.betaAccessEgressWalkTime_min = 0.0;
 		parameters.jCarodt.alpha_u = -1.23;
-		parameters.jCarodt.alpha_sex = -0.42;
+		parameters.jCarodt.alpha_female = -0.42;
 		parameters.jCarodt.alpha_age = -1.32/100;
 
 		//Taxi
@@ -183,7 +170,7 @@ public class JakartaModeParameters extends ModeParameters {
 		//parameters.jMcodt.betaWaitingTime_u_min = 0.0 ;
 		//parameters.jMcodt.betaAccessEgressWalkTime_min = 0.0;
 		parameters.jMcodt.alpha_u = -1.15;
-		parameters.jMcodt.alpha_sex = 0.83;
+		parameters.jMcodt.alpha_female = 0.83;
 		parameters.jMcodt.alpha_age = -1.32/100;
 		parameters.jMcodt.betaShortDistance_km = -0.03; // this parameter is not statistically significant, yml set to 0.0
 		

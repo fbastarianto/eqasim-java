@@ -37,9 +37,10 @@ public class RunSimulation {
 	static public void main(String[] args) throws ConfigurationException {
 		CommandLine cmd = new CommandLine.Builder(args) //
 				.requireOptions("config-path") //
-				.allowPrefixes("mode-parameter", "cost-parameter") //
+				.allowPrefixes("commuter-mode-parameter", "non-commuter-mode-parameter", "feeder-policy-parameter", "cost-parameter", "mode-parameter") //
 				.build();
 
+		org.eqasim.jakarta.mode_choice.parameters.JakartaParameterLoader.rejectLegacyOverrides(cmd);
 		JakartaConfigurator configurator = new JakartaConfigurator(cmd);
 		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"));
 		configurator.updateConfig(config);		//EqasimConfigurator.getConfigGroups());
@@ -50,6 +51,10 @@ public class RunSimulation {
 		Scenario scenario = ScenarioUtils.createScenario(config);
 		configurator.configureScenario(scenario); //EqasimConfigurator.configureScenario(scenario);
 		ScenarioUtils.loadScenario(scenario);
+        for (var person : scenario.getPopulation().getPersons().values()) {
+            org.eqasim.jakarta.mode_choice.behaviour.JakartaSubpopulation.select(person);
+            org.eqasim.jakarta.mode_choice.behaviour.JakartaPersonData.read(person, true);
+        }
 		configurator.adjustScenario(scenario); //EqasimConfigurator.adjustScenario(scenario);
 		
 		EqasimConfigGroup eqasimConfig = (EqasimConfigGroup) config.getModules().get(EqasimConfigGroup.GROUP_NAME);
